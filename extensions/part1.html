@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.1" data-basepath=".." data-revision="Mon Sep 05 2016 18:18:21 GMT+0530 (IST)">
+    <div class="book" data-level="4.1" data-basepath=".." data-revision="Mon Sep 05 2016 19:12:12 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -634,7 +634,7 @@ SAL_IMPLEMENT_MAIN()
 }
 </code></pre>
 <p>How to build and run this program ?</p>
-<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/dennisfrancis/SimpleBootstrapCppUNO.git
+<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/SimpleBootstrapCppUNO.git
 $ make
 $ make SimpleBootstrap.run
 </code></pre>
@@ -656,7 +656,7 @@ Reference&lt; XComponent &gt; xComponent = xDesktop2-&gt;loadComponentFromURL(
                                       Sequence &lt; ::com::sun::star::beans::PropertyValue &gt;() );
 </code></pre>
 <p>The complete C++ program that creates a Desktop object and loads an empty calc document can be built and run as :</p>
-<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/dennisfrancis/UNOCreateUseObject.git
+<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/UNOCreateUseObject.git
 $ make
 $ make CreateUseObject.run
 </code></pre>
@@ -668,7 +668,7 @@ After loading a document these methods can be used to get Sheets/Text/Drawpages 
 </li>
 <li><p>Objects that are not considered integral part of an object are accessible through a set of &quot;universal&quot; methods such as
 <code>Any getPropertyValue( OUString aPropertyName )</code> (these objects are considered as properties of the main object)
-The type Any will be explained in next part.</p>
+The type <code>Any</code> is explained in next part.</p>
 </li>
 </ol>
 

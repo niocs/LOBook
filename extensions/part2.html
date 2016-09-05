@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.2" data-basepath=".." data-revision="Mon Sep 05 2016 18:18:21 GMT+0530 (IST)">
+    <div class="book" data-level="4.2" data-basepath=".." data-revision="Mon Sep 05 2016 19:12:12 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -446,7 +446,231 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="part2">Part2</h1>
+                        <h1 id="libreoffice-extension-development-with-c-part-2-working-with-a-spreadsheet-document">Libreoffice extension development with C++ - Part 2 - Working with a Spreadsheet document</h1>
+<p>In this part we extend the program developed in Part 1 <a href="https://github.com/niocs/UNOCreateUseObject" target="_blank">code</a>
+to manipulate the spreadsheet further.</p>
+<ol>
+<li><p>we use <code>::cppu::bootstrap()</code> to get the remote office context of a running
+office instance</p>
+<pre><code class="lang-cpp">Reference&lt; XComponentContext &gt; xContext( ::cppu::bootstrap() );
+</code></pre>
+</li>
+<li><p>Obtain the service manager from the component context</p>
+<pre><code class="lang-cpp">Reference&lt; XMultiComponentFactory &gt; xServiceManager = xContext-&gt;getServiceManager();
+</code></pre>
+</li>
+<li><p>Create Desktop service</p>
+<pre><code class="lang-cpp">Reference&lt; XInterface &gt; xDesktop = xServiceManager-&gt;createInstanceWithContext( OUString(<span class="hljs-string">&quot;com.sun.star.frame.Desktop&quot;</span>), xContext );
+</code></pre>
+</li>
+<li><p>Get <code>XDesktop2</code> interface from <code>XInterface</code> reference we got in previous step</p>
+<pre><code class="lang-cpp">Reference&lt; XDesktop2 &gt; xDesktop2( xDesktop, UNO_QUERY );
+</code></pre>
+</li>
+<li><p>Load a blank spreadsheet document using <code>XDesktop2</code> interface</p>
+<pre><code class="lang-cpp">Reference&lt; XComponent &gt; xComponent = xDesktop2-&gt;loadComponentFromURL( OUString( <span class="hljs-string">&quot;private:factory/scalc&quot;</span> ), <span class="hljs-comment">// URL to the ods file                                                                          </span>
+                                                                      OUString( <span class="hljs-string">&quot;_blank&quot;</span> ), <span class="hljs-number">0</span>,
+                                                                      Sequence &lt; ::com::sun::star::beans::PropertyValue &gt;() );
+</code></pre>
+<p>Note that the last parameter can be used to describe the properties of the document, and can
+use the property names in <a href="http://api.libreoffice.org/docs/idl/ref/servicecom_1_1sun_1_1star_1_1document_1_1MediaDescriptor.html" target="_blank">MediaDescriptor</a>
+See below for details on <code>Sequence</code> and <code>PropertyValue</code> types.</p>
+</li>
+<li><p>In fact the <code>xComponent</code> object we got supports <code>XSpreadsheetDocument</code> interface, but
+we need to explicitly convert by letting the compiler know by :</p>
+<pre><code class="lang-cpp">Reference&lt; XSpreadsheetDocument &gt; xSpreadsheetDocument(xComponent, UNO_QUERY);
+</code></pre>
+</li>
+<li><p>Get the &quot;collection of spreadsheets&quot; interface <code>XSpreadsheets</code> :</p>
+<pre><code class="lang-cpp">Reference&lt; XSpreadsheets &gt; xSpreadsheets = xSpreadsheetDocument-&gt;getSheets();
+</code></pre>
+</li>
+<li><p>Create a new sheet named MySheet</p>
+<pre><code class="lang-cpp">xSpreadsheets-&gt;insertNewByName( OUString(<span class="hljs-string">&quot;MySheet&quot;</span>), (<span class="hljs-keyword">short</span>)<span class="hljs-number">0</span> );
+</code></pre>
+</li>
+<li><p>See what is the type of each element in the collection <code>XSpreadsheets</code></p>
+<pre><code class="lang-cpp">Type aElemType = xSpreadsheets-&gt;getElementType();
+<span class="hljs-built_in">fprintf</span>( stdout, <span class="hljs-string">&quot;\n&gt;&gt;&gt; xSpreadsheets container has elements each of type = %s\n&quot;</span>,                                                                                                                         
+         OUStringToOString( aElemType.getTypeName(), RTL_TEXTENCODING_ASCII_US ).getStr() );
+</code></pre>
+<p>This should print the type as &quot;com.sun.star.sheet.XSpreadsheet&quot;</p>
+</li>
+<li><p>Get the object corresponding to the sheet named &quot;MySheet&quot; and query its
+<code>XSpreadsheet</code> interface</p>
+<pre><code class="lang-cpp">Any aSheet = xSpreadsheets-&gt;getByName( OUString(<span class="hljs-string">&quot;MySheet&quot;</span>) );
+Reference&lt; XSpreadsheet &gt; xSpreadsheet( aSheet, UNO_QUERY );
+</code></pre>
+</li>
+<li><p>Get cells A1, A2, A3 each by using <code>getCellByPosition</code> method of <code>XCellRange</code> interface inherited <code>XSpreadsheet</code></p>
+<p>Set cell A1 to 105 and A2 to 501 and insert a formula to A3 =SUM(A1:A2)</p>
+<pre><code class="lang-cpp">Reference&lt; XCell &gt; xCell = xSpreadsheet-&gt;getCellByPosition(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+xCell-&gt;setValue(<span class="hljs-number">105</span>);
+
+xCell = xSpreadsheet-&gt;getCellByPosition(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+xCell-&gt;setValue(<span class="hljs-number">501</span>);
+
+xCell = xSpreadsheet-&gt;getCellByPosition(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>);
+xCell-&gt;setFormula(<span class="hljs-string">&quot;=sum(A1:A2)&quot;</span>);
+</code></pre>
+</li>
+<li><p>Get <code>XPropertySet</code> interface of <code>xCell</code> object which is really a <code>Cell</code> service object</p>
+<pre><code class="lang-cpp">Reference&lt; XPropertySet &gt; xCellProps( xCell, UNO_QUERY );
+</code></pre>
+</li>
+<li><p>Set the property &quot;CellStyle&quot; of A3 cell to the value &quot;Result&quot; and
+the property &quot;VertJustify&quot; to the enum <code>CellVertJustify2::TOP</code></p>
+<pre><code class="lang-cpp">xCellProps-&gt;setPropertyValue( OUString(<span class="hljs-string">&quot;CellStyle&quot;</span>), makeAny( OUString(<span class="hljs-string">&quot;Result&quot;</span>) ) );
+xCellProps-&gt;setPropertyValue( OUString(<span class="hljs-string">&quot;VertJustify&quot;</span>), makeAny( CellVertJustify2::TOP ) );
+</code></pre>
+<p>Note that <code>makeAny()</code> function converts any type passed to it to <code>Any</code> type.</p>
+</li>
+<li><p>Get <code>XModel</code> interface from the spreadsheet component object we got in step 5)
+then get <code>XController</code> interface object using <code>XModel</code>&apos;s <code>getCurrentController()</code> method
+and query <code>XSpreadsheetView</code> from <code>XController</code> object. Using the <code>XSpreadsheetView</code> set the
+&quot;MySheet&quot; tab to be the active one.</p>
+<pre><code class="lang-cpp">Reference&lt; XModel &gt; xSpreadsheetModel( xComponent, UNO_QUERY );
+Reference&lt; XController &gt; xSpreadsheetController = xSpreadsheetModel-&gt;getCurrentController();
+Reference&lt; XSpreadsheetView &gt; xSpreadsheetView( xSpreadsheetController, UNO_QUERY );
+xSpreadsheetView-&gt;setActiveSheet( xSpreadsheet );
+</code></pre>
+</li>
+<li><p>Get <code>XCellRangesQuery</code> supporting object from the &quot;MySheet&quot; object.
+Get the cell ranges where there are formulas in the new sheet
+(we know that there is only one cell where there are formulas)
+Then get the collection of formula cells in the obtained range
+using <code>XEnumerationAccess</code> and <code>XEnumeration</code> interfaces.</p>
+<pre><code class="lang-cpp">Reference&lt; XCellRangesQuery &gt; xCellQuery( aSheet, UNO_QUERY );
+Reference&lt; XSheetCellRanges &gt; xFormulaCells = xCellQuery-&gt;queryContentCells( (<span class="hljs-keyword">short</span>)CellFlags::FORMULA );
+Reference&lt; XEnumerationAccess &gt; xFormulasEnumAccess = xFormulaCells-&gt;getCells();
+Reference&lt; XEnumeration &gt; xFormulaEnum = xFormulasEnumAccess-&gt;createEnumeration();
+</code></pre>
+</li>
+<li><p>Loop over the enumerated collection of formula cells by using <code>XEnumeration</code> interface&apos;s
+<code>hasMoreElements()</code> and <code>nextElement()</code> methods
+Check <a href="http://api.libreoffice.org" target="_blank">http://api.libreoffice.org</a> for the signature of <code>hasMoreElements()</code> and <code>nextElement()</code> methods
+as an excercise.</p>
+<pre><code class="lang-cpp"><span class="hljs-keyword">while</span> ( xFormulaEnum-&gt;hasMoreElements() )
+{
+    Any aNextElement = xFormulaEnum-&gt;nextElement();
+    xCell = Reference&lt; XCell &gt;( aNextElement, UNO_QUERY );
+    Reference&lt; XCellAddressable &gt; xCellAddress( xCell, UNO_QUERY );
+    <span class="hljs-built_in">fprintf</span>( stdout, <span class="hljs-string">&quot;&gt;&gt;&gt; Formula cell in column = %d, row = %d, with formula = %s\n&quot;</span>,
+             xCellAddress-&gt;getCellAddress().Column,
+             xCellAddress-&gt;getCellAddress().Row,
+             OUStringToOString( xCell-&gt;getFormula(), RTL_TEXTENCODING_ASCII_US ).getStr() );
+    fflush( stdout );
+}
+</code></pre>
+</li>
+</ol>
+<p>The complete C++ program can be compiled and run using :</p>
+<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/ManipulateSpreadsheet.git
+$ make
+$ make ManipulateSpreadsheet.run
+</code></pre>
+<h2 id="types">Types</h2>
+<p>The relation between UNO types like any, string, short etc to the corresponding C++ types can be seen at
+<a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/FirstSteps/Common_Types" target="_blank">CommonTypes</a></p>
+<p><strong>Struct type</strong> : These are similar to C++ struct where there are only public member variables only.
+Example</p>
+<p><code>::com::sun::star::beans::PropertyValue</code></p>
+<p>IDL source file : PropertyValue.idl</p>
+<pre><code>    module com {  module sun {  module star {  module beans {
+    published struct PropertyValue
+    {
+        string Name;
+
+        long Handle;
+
+       any Value;
+
+       com::sun::star::beans::PropertyState State;
+
+   };
+
+   }; }; }; };
+</code></pre><p>Note : Structs should not be contructed using service manager.</p>
+<p>Instantiating of a struct in C++ can be done as usual using either static allocation/dynamic allocation using new keyword</p>
+<p>Example :</p>
+<pre><code class="lang-cpp">   ::com::sun::star::beans::PropertyValue aProp;
+   aProp.Name = OUString( <span class="hljs-string">&quot;Readonly&quot;</span> );
+   aProp.Value = makeAny( ( sal_Bool )<span class="hljs-keyword">true</span> );
+</code></pre>
+<p><strong>Any type</strong> : This type can hold on to one of the C++ types that are convertible to UNO types.
+To set an <code>Any</code> type variable, use <code>&lt;&lt;=</code> operator
+To get from an <code>Any</code> type variable use <code>&gt;&gt;=</code> operator</p>
+<p>Example :</p>
+<pre><code class="lang-cpp">    sal_Int32 cellColor;
+    Any any;
+    any = rCellProps-&gt;getPropertyValue(OUString::createFromAscii( <span class="hljs-string">&quot;CharColor&quot;</span> ));
+    <span class="hljs-comment">// extract the value from any</span>
+    any &gt;&gt;= cellColor;
+</code></pre>
+<p><strong>Sequence type</strong> : This corresponds to &quot;sequence&quot; UNO type. This represents a homogenous collection of values of one UNO type with
+variable number of elements. For remote access this interfaces that take or return &quot;sequence&quot; type is important for performance.</p>
+<p>Example a) Empty sequence of <code>PropertyValue</code> struct :</p>
+<pre><code class="lang-cpp">   Sequence&lt; ::com::sun::star::beans::PropertyValue &gt; loadProps;
+</code></pre>
+<p>Example b) Non empty sequence of <code>PropertyValue</code> structs :</p>
+<pre><code class="lang-cpp">   Sequence&lt; ::com::sun::star::beans::PropertyValue &gt; loadProps( <span class="hljs-number">1</span> );
+   <span class="hljs-comment">// the structs are default constructed</span>
+   loadProps[<span class="hljs-number">0</span>].Name = OUString::createFromAscii( <span class="hljs-string">&quot;ReadOnly&quot;</span> );
+   loadProps[<span class="hljs-number">0</span>].Value &lt;&lt;= <span class="hljs-keyword">true</span>;
+
+   Reference&lt; XComponent &gt; rComponent = rComponentLoader-&gt;loadComponentFromURL(
+                                           OUString::createFromAscii(<span class="hljs-string">&quot;private:factory/swriter&quot;</span>), 
+                                           OUString::createFromAscii(<span class="hljs-string">&quot;_blank&quot;</span>), 
+                                           <span class="hljs-number">0</span>, 
+                                           loadProps);
+</code></pre>
+<h2 id="element-access">Element Access</h2>
+<p>Element access is the way to access a object from a collection of objects.
+The most important element access interfaces are :</p>
+<ul>
+<li><code>com::sun::star::container::XNameContainer</code></li>
+<li><code>com::sun::star::container::XIndexContainer</code></li>
+<li><code>com::sun::star::container::XEnumeration</code></li>
+</ul>
+<p>All these three inherit from <code>XElementAccess</code> interface and it has two methods :</p>
+<pre><code>type getElementType()
+boolean hasElements()
+</code></pre><p><code>getElementType()</code> returns the type of elements of the container as a <code>com::sun::star::uno::Type</code> object.
+If container is heterogenous it returns <code>void</code> type.</p>
+<p><code>hasElements()</code> tells whether the set contains any element at all.</p>
+<ol>
+<li><p>Name access</p>
+<p>The basic interface inherited by <code>com::sun::star::container::XNameContainer</code> is <code>com::sun::star::container::XNameAccess</code>
+which has the following three methods</p>
+<pre><code>any getByName( [in] string name)
+sequence&lt; string &gt; getElementNames()
+boolean hasByName( [in] string name)
+</code></pre></li>
+<li><p>Index access</p>
+<p>The basic interface inherited by <code>com::sun::star::container::XIndexContainer</code> is <code>com::sun::star::container::XIndexAccess</code>
+It has two methods :</p>
+<pre><code>any getByIndex( [in] long index)
+long getCount()
+</code></pre><p>Example : <code>com::sun::star::sheet::XSpreadsheets</code> supports both Index access and Named access</p>
+</li>
+<li><p>Enumeration access</p>
+<p>The interface <code>com::sun::star::container::XEnumerationAccess</code> creates enumerations that allow traveling across a set of objects.
+It has one method:</p>
+<pre><code>com::sun::star::container::XEnumeration createEnumeration()
+</code></pre><p>The returned <code>XEnumeration</code> object supports two methods :</p>
+<pre><code>boolean hasMoreElements()
+any nextElement()
+</code></pre><p>We used the above methods in getting all formula cells in the C++ program developed above.</p>
+<p>In the program we used <code>XCellRangesQuery</code> interface to get cell ranges object corresponding
+to cells having formulas. <code>XCellRangesQuery</code> interface defines the method :</p>
+<pre><code>XSheetCellRanges queryContentCells(short cellFlags)
+</code></pre><p>The returned <code>XSheetCellRanges</code> object has the following methods :</p>
+<pre><code>XEnumerationAccess getCells()
+String getRangeAddressesAsString()
+sequence&lt; com.sun.star.table.CellRangeAddress &gt; getRangeAddresses()
+</code></pre><p>We used <code>getCells()</code> to get hold of <code>XEnumerationAccess</code> object to iterate through the cells with formula.</p>
+</li>
+</ol>
 
                     
                     </section>
