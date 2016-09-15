@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.2" data-basepath=".." data-revision="Thu Sep 15 2016 14:23:05 GMT+0530 (IST)">
+    <div class="book" data-level="4.2" data-basepath=".." data-revision="Thu Sep 15 2016 18:07:06 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -572,6 +572,8 @@ $ make ManipulateSpreadsheet.run
 <h2 id="types">Types</h2>
 <p>The relation between UNO types like any, string, short etc to the corresponding C++ types can be seen at
 <a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/FirstSteps/Common_Types" target="_blank">CommonTypes</a></p>
+<p>Refer <a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/ProUNO/Data_Types" target="_blank">UNO Data Types</a> for a full coverage on
+the UNO data types. Some of them are explained here.</p>
 <p><strong>Struct type</strong> : These are similar to C++ struct where there are only public member variables only.
 Example</p>
 <p><code>::com::sun::star::beans::PropertyValue</code></p>
@@ -597,7 +599,21 @@ Example</p>
    aProp.Name = OUString( <span class="hljs-string">&quot;Readonly&quot;</span> );
    aProp.Value = makeAny( ( sal_Bool )<span class="hljs-keyword">true</span> );
 </code></pre>
-<p><strong>Any type</strong> : This type can hold on to one of the C++ types that are convertible to UNO types.
+<p>Struct may also inherit from other structs.</p>
+<p><strong>Polymorphic struct</strong> : This is a struct with one or more <em>type parameters</em> and the members of this struct can have these parameters as
+types.</p>
+<p>Example of polymorphic struct :</p>
+<pre><code>// A polymorphic struct type template with two type parameters:
+struct Poly&lt;T,U&gt; {
+      T member1;
+      T member2;
+      U member3;
+      long member4;
+};
+</code></pre><p>Example showing the usage of polymorphic struct :</p>
+<pre><code>// Using an instantiation of Poly as a UNO type:
+interface XIfc { Poly&lt;boolean, any&gt; fn(); };
+</code></pre><p><strong>Any type</strong> : This type can hold on to one of the C++ types that are convertible to UNO types.
 To set an <code>Any</code> type variable, use <code>&lt;&lt;=</code> operator
 To get from an <code>Any</code> type variable use <code>&gt;&gt;=</code> operator</p>
 <p>Example :</p>

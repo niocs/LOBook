@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.1" data-basepath=".." data-revision="Thu Sep 15 2016 14:23:05 GMT+0530 (IST)">
+    <div class="book" data-level="4.1" data-basepath=".." data-revision="Thu Sep 15 2016 18:07:06 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -540,6 +540,33 @@ See <a href="http://opengrok.libreoffice.org/xref/core/include/com/sun/star/uno/
 Also see <a href="http://api.libreoffice.org/docs/cpp/ref/a00264.html" target="_blank">api-reference</a>.</p>
 </li>
 </ol>
+<p>Services can also contain optional interfaces. This means the service implementation need not implement those interfaces. So when we get objects corresponding
+to optional interfaces from service objects via UNO_QUERY, we should check if the returned Reference is null pointer as shown below.</p>
+<pre><code class="lang-cpp">Reference&lt;OptionalInterface&gt; result(xExampleServiceObject, UNO_QUERY);
+<span class="hljs-keyword">if</span> ( !result.is() ) {
+   <span class="hljs-comment">// The optional interface is not implemented, so do fallback procedure or raise exception.</span>
+   <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+}
+<span class="hljs-comment">// Use the &apos;result&apos; object</span>
+</code></pre>
+<p>New style services can have constructors similar to interface methods.</p>
+<pre><code>service SomeService: XSomeInterface { 
+      create1();
+      create2([in] long arg1, [in] string arg2);
+      create3([in] any... rest);
+};
+</code></pre><p>In this example there are three explicit constructors : <code>create1</code>, <code>create2</code>, <code>create3</code>. Unlike interface methods, service constructors do not
+specify a return type.
+The implementation of these constructors would take the component context object of type <code>com::sun::star::uno::XComponentContext</code> as first parameter followed
+by any explicit parameters. The service constructors can also have exception specifications (<code>raises (Exception1, Exception2)</code>). If the constructor has no
+exception specification, it may only throw runtime exceptions in particular <code>com::sun::star::uno::DeploymentException</code>.</p>
+<p>If the service specification has no explicit constructor, then the implicit constructor is used for creating its objects which language binding specific but it is
+generally named as <code>create</code>. This takes no argument besides <code>com::sun::star::uno::XComponentContext</code></p>
+<h2 id="component">Component</h2>
+<blockquote>
+<p>A <strong>component</strong> is a shared library or Java archive containing implementations of one or more services in one of the target programming languages supported by UNO. Such a component must meet basic requirements, mostly different for the different target language, and it must support the specification of the implemented services. That means all specified interfaces and properties must be implemented. Components must be registered in the UNO runtime system. After the registration all implemented services can be used by ordering an instance of the service at the appropriate service factory and accessing the functionality over interfaces.</p>
+</blockquote>
+<p>Refer <a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/ProUNO/Services" target="_blank">Service</a></p>
 <blockquote>
 <p> The concepts of interfaces and services were introduced for the following reasons :</p>
 <p> 1)  Interfaces and services separate specification from implementation.</p>
