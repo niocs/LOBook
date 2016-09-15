@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.1" data-basepath=".." data-revision="Tue Sep 06 2016 09:57:07 GMT+0530 (IST)">
+    <div class="book" data-level="4.1" data-basepath=".." data-revision="Thu Sep 15 2016 13:44:54 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -602,19 +602,19 @@ SAL_IMPLEMENT_MAIN()
     {
         <span class="hljs-comment">// get the remote office component context</span>
         Reference&lt; XComponentContext &gt; xContext( ::cppu::bootstrap() );
-    <span class="hljs-keyword">if</span> ( !xContext.is() )
-    {
-        <span class="hljs-built_in">fprintf</span>(stdout, <span class="hljs-string">&quot;\nError getting context from running LO instance...\n&quot;</span>);
-        <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
-    }
+        <span class="hljs-keyword">if</span> ( !xContext.is() )
+        {
+            <span class="hljs-built_in">fprintf</span>(stdout, <span class="hljs-string">&quot;\nError getting context from running LO instance...\n&quot;</span>);
+            <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+        }
 
-    <span class="hljs-comment">// retrieve the service-manager from the context</span>
+        <span class="hljs-comment">// retrieve the service-manager from the context</span>
         Reference&lt; XMultiComponentFactory &gt; rServiceManager = xContext-&gt;getServiceManager();
-    <span class="hljs-keyword">if</span> ( rServiceManager.is() )
-        <span class="hljs-built_in">fprintf</span>(stdout, <span class="hljs-string">&quot;\nremote ServiceManager is available\n&quot;</span>);
-    <span class="hljs-function"><span class="hljs-keyword">else</span>
-        <span class="hljs-title">fprintf</span><span class="hljs-params">(stdout, &quot;\nremote ServiceManager is not available\n&quot;)</span></span>;
-    fflush(stdout);
+        <span class="hljs-keyword">if</span> ( rServiceManager.is() )
+            <span class="hljs-built_in">fprintf</span>(stdout, <span class="hljs-string">&quot;\nremote ServiceManager is available\n&quot;</span>);
+        <span class="hljs-function"><span class="hljs-keyword">else</span>
+            <span class="hljs-title">fprintf</span><span class="hljs-params">(stdout, &quot;\nremote ServiceManager is not available\n&quot;)</span></span>;
+        fflush(stdout);
     }
     <span class="hljs-keyword">catch</span> ( ::cppu::BootstrapException&amp; e )
     {
