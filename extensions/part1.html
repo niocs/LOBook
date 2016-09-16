@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.1" data-basepath=".." data-revision="Thu Sep 15 2016 18:07:06 GMT+0530 (IST)">
+    <div class="book" data-level="4.1" data-basepath=".." data-revision="Fri Sep 16 2016 18:18:56 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -340,6 +340,21 @@
             
         </li>
     
+        <li class="chapter " data-level="4.3" data-path="extensions/part3.html">
+            
+                
+                    <a href="../extensions/part3.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.3.</b>
+                        
+                        Part3
+                    </a>
+                
+            
+            
+        </li>
+    
 
             </ul>
             
@@ -562,16 +577,35 @@ by any explicit parameters. The service constructors can also have exception spe
 exception specification, it may only throw runtime exceptions in particular <code>com::sun::star::uno::DeploymentException</code>.</p>
 <p>If the service specification has no explicit constructor, then the implicit constructor is used for creating its objects which language binding specific but it is
 generally named as <code>create</code>. This takes no argument besides <code>com::sun::star::uno::XComponentContext</code></p>
-<h2 id="component">Component</h2>
-<blockquote>
-<p>A <strong>component</strong> is a shared library or Java archive containing implementations of one or more services in one of the target programming languages supported by UNO. Such a component must meet basic requirements, mostly different for the different target language, and it must support the specification of the implemented services. That means all specified interfaces and properties must be implemented. Components must be registered in the UNO runtime system. After the registration all implemented services can be used by ordering an instance of the service at the appropriate service factory and accessing the functionality over interfaces.</p>
-</blockquote>
 <p>Refer <a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/ProUNO/Services" target="_blank">Service</a></p>
 <blockquote>
 <p> The concepts of interfaces and services were introduced for the following reasons :</p>
 <p> 1)  Interfaces and services separate specification from implementation.</p>
 <p> 2)  Service names allow to create instances by specification name, not by class names.</p>
 </blockquote>
+<h2 id="component">Component</h2>
+<blockquote>
+<p>A <strong>component</strong> is a shared library or Java archive containing implementations of one or more services in one of the target programming languages supported by UNO. Such a component must meet basic requirements, mostly different for the different target language, and it must support the specification of the implemented services. That means all specified interfaces and properties must be implemented. Components must be registered in the UNO runtime system. After the registration all implemented services can be used by ordering an instance of the service at the appropriate service factory and accessing the functionality over interfaces.</p>
+</blockquote>
+<h2 id="component-context">Component Context</h2>
+<p>Component context is a read-only container offering named values. One of the named values is service manager. When a new component is created the <em>component context</em> is passed to it. It can also be
+viewed as an environment where all components live.</p>
+<p>See the below diagram from OOO wiki showing relationship between Component context and service managers :
+<img src="https://wiki.openoffice.org/w/images/thumb/c/c2/UseServices1.png/800px-UseServices1.png" alt="Component context" title="ComponentContext and the ServiceManager"></p>
+<p>The component context supports <code>com::sun::star::uno::XComponentContext</code> interface.</p>
+<pre><code>// module com::sun::star::uno
+interface XComponentContext : XInterface
+{
+      any getValueByName( [in] string Name );
+      com::sun::star::lang::XMultiComponentFactory getServiceManager();
+};
+</code></pre><p><code>getServiceManager()</code> returns the singleton com::sun::star::lang::ServiceManager.
+<code>getValueByName()</code> returns named value. The named values can be:</p>
+<ol>
+<li><em>Singletons</em> : Example ServiceManager</li>
+<li><em>Implementation properties</em></li>
+<li><em>Service properties</em></li>
+</ol>
 <h2 id="setup-lo-sdk-after-building-lo">Setup LO SDK after building LO</h2>
 <p>Go to $LOROOT/instdir/sdk and run :</p>
 <pre><code>$ ./setsdkenv_unix

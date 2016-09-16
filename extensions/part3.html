@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>ui | Libreoffice Blog</title>
+        <title>Part3 | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,8 @@
         
     
     
-    <link rel="next" href="../calcarch/filter.html" />
     
-    
-    <link rel="prev" href="../calcarch/core.html" />
+    <link rel="prev" href="../extensions/part2.html" />
     
 
         
@@ -36,7 +34,7 @@
     
 
         
-    <div class="book" data-level="2.3" data-basepath=".." data-revision="Fri Sep 16 2016 18:18:56 GMT+0530 (IST)">
+    <div class="book" data-level="4.3" data-basepath=".." data-revision="Fri Sep 16 2016 18:18:56 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -148,7 +146,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.3" data-path="calcarch/ui.html">
+        <li class="chapter " data-level="2.3" data-path="calcarch/ui.html">
             
                 
                     <a href="../calcarch/ui.html">
@@ -340,7 +338,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.3" data-path="extensions/part3.html">
+        <li class="chapter active" data-level="4.3" data-path="extensions/part3.html">
             
                 
                     <a href="../extensions/part3.html">
@@ -463,7 +461,106 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="ui">ui</h1>
+                        <h1 id="libreoffice-extension-development-with-c-part-3-how-uno-objects-connect-and-communicate-with-each-other">Libreoffice extension development with C++ - Part 3 - How UNO objects connect and communicate with each other.</h1>
+<blockquote>
+<p>UNO objects in different environments connect via the <strong>interprocess bridge</strong>. You can execute calls on UNO object instances, that are located in a different process. This is done by converting the method name and the arguments into a byte stream representation, and sending this package to the remote process, for example, through a socket connection.</p>
+</blockquote>
+<p>By default LO will not listen on a resource for security reasons. We can make LO listen for UNO connections from external processess by
+starting soffice with extra param :</p>
+<pre><code>$ soffice --accept=&quot;socket,host=0,port=2002;urp;&quot; --calc
+</code></pre><p>After running, it can be verified using netstat -na, and it would show something like :</p>
+<pre><code>Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 0.0.0.0:2002            0.0.0.0:*               LISTEN
+</code></pre><h2 id="import-a-uno-object">Import a UNO object</h2>
+<p>To import a reference to a UNO object from an exporting server(example : the LO instance), we use <code>com::sun::star::bridge::UnoUrlResolver</code> <em>service</em>
+which supports the <em>interface</em> <code>com::sun::star::bridge::XUnoUrlResolver</code>. The interface definition is as follows :</p>
+<pre><code>interface XUnoUrlResolver: com::sun::star::uno::XInterface
+{
+      /** resolves an object on the UNO URL */
+      com::sun::star::uno::XInterface resolve( [in] string sUnoUrl )  
+          raises (com::sun::star::connection::NoConnectException,  
+                  com::sun::star::connection::ConnectionSetupException,  
+                  com::sun::star::lang::IllegalArgumentException); 
+};
+</code></pre><p>The string passed to <code>resolve()</code> method is called UNO URL with the following format :</p>
+<pre><code> uno:connection-type,params;protocol-name,params;ObjectName
+| I |           II         |        III         |   IV     |
+</code></pre><p>Example :</p>
+<pre><code>uno:socket,host=localhost,port=2002;urp;StarOffice.ServiceManager
+</code></pre><p>The parts I to IV are :</p>
+<p>I. This identifies the URL as UNO URL and distinguishes it from others, such as http: or ftp: URLs.</p>
+<p>II. connection-type indicates the transport layer mechanism to be used to transfer the byte stream for example TCP/IP sockets or named pipes. Optionally after this string there can be key=value pairs separated by comma indicating the specifics of the transport layer mechanism to be used. Example for sockets, it needs host and port.</p>
+<p>III. This indicates the application layer protocol to be used. Example : urp (UNO Remote Protocol). This string can be followed optionally be key=value pairs separated by comma to customize the protocol to specific needs.</p>
+<p>IV. This specifies the distinct name of the UNO object the server has exported. Note that it is not possible to access an arbitraty UNO object like in CORBA.</p>
+<h2 id="how-to-import-an-object-using-unourlresolver-service">How to import an object using UnoUrlResolver service.</h2>
+<ol>
+<li><p>Get local component context <em>without attempting to invoke LO</em>.</p>
+<pre><code class="lang-cpp">Reference&lt; XComponentContext &gt; xLocalComponentContext = cppu::defaultBootstrap_InitialComponentContext();
+</code></pre>
+<p>Note that this is different from calling <code>cppu::bootstrap()</code> as in previous examples where it will start LO instance if not found running.
+Where as here no connections to LO is made yet.</p>
+</li>
+<li><p>Get initial service manager from local component context.</p>
+<pre><code class="lang-cpp">Reference&lt; XMultiComponentFactory &gt; xServiceManager = xLocalComponentContext-&gt;getServiceManager();
+</code></pre>
+</li>
+<li><p>Create UnoUrlResolver service locally and query for XUnoUrlResolver interface.</p>
+<pre><code class="lang-cpp">Reference&lt; XInterface &gt; xInstance =
+     xServiceManager-&gt;createInstanceWithContext(
+         <span class="hljs-string">&quot;com.sun.star.bridge.UnoUrlResolver&quot;</span>, xLocalComponentContext );
+Reference&lt; XUnoUrlResolver &gt; xResolver( xInstance, UNO_QUERY );
+</code></pre>
+</li>
+<li><p>Import the remote UNO object StarOffice.ServiceManager from port 2002 where soffice is listening.</p>
+<pre><code class="lang-cpp">xInstance = xResolver-&gt;resolve( OUString(
+    <span class="hljs-string">&quot;uno:socket,host=localhost,port=2002;urp;StarOffice.ServiceManager&quot;</span> ) );
+</code></pre>
+<p>Note that the returned object is typed as <code>Reference&lt; XInterface &gt;</code> so we need to query for the required interface to use it.</p>
+</li>
+</ol>
+<p>The complete runnable C++ code for the above can be downloaded and run as :</p>
+<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/ImportingUNOObject.git
+$ make
+$ make ImportUNOObject.run
+</code></pre>
+<p>If you run the above <strong>before</strong> starting soffice with <em>listen instructions for port 2002</em>, the program will show the exception caught and will print something like :</p>
+<pre><code>Error: Connector : couldn&apos;t connect to socket
+</code></pre><p>along with some warnings and <code>make</code> errors which can be ignored. The above error means the program was not able to connect to soffice to import the UNO object.</p>
+<p>Usage of UnoUrlResolver has some disadvantages :</p>
+<ol>
+<li>We won&apos;t be notified when brige terminates.</li>
+<li>We cannot close the underlying interprocess connection.</li>
+<li>We cannot give the remote process any of our local object as an initial object.</li>
+</ol>
+<h2 id="interprocess-bridge">Interprocess Bridge</h2>
+<p>This is the entity in any remote process responsible for remote connections. Bridge is <em>threadsafe</em> and allows multiple threads to execute remote calls.
+The main thread(dispatcher) inside bridge will not block as it passes requests to worker threads. There are however two types of remote calls :</p>
+<ol>
+<li><p><strong>Synchronous call</strong> : The request is sent through the connection and lets the requesting thread <em>wait</em> for the reply. Any calls that have a
+<em>return value</em> or <em>out parameter</em> or throw exception other than <code>RuntimeException</code> must be synchronous.</p>
+</li>
+<li><p><em>Asynchronous/oneway call</em> : This sends the request throught the connection and returns immediately without waiting for reply.</p>
+</li>
+</ol>
+<p>In the IDL reference of all methods it will be indicated if the corresponding request is synchronous or asynchronous using the [oneway] modifier.</p>
+<p><strong>Note that there exists cases where oneway calls cause deadlocks in LO so we should not introduce new oneway methods when writing new components</strong></p>
+<blockquote>
+<p>Although the remote bridge supports asynchronous calls, this feature is disabled by default. Every call is executed synchronously. The oneway flag of UNO interface methods is ignored. However, the bridge can be started in a mode that enables the oneway feature and thus executes calls flagged with the [oneway] modifier as asynchronous calls. To do this, the protocol part of the connection string on both sides of the remote bridge must be extended by &apos;,Negotiate=0,ForceSynchronous=0&apos;</p>
+</blockquote>
+<p>Example : use the below to start soffice with listening</p>
+<pre><code class="lang-bash">$ soffice --accept=<span class="hljs-string">&quot;socket,host=0,port=2002;urp,Negotiate=0,ForceSynchronous=0;&quot;</span> --calc
+</code></pre>
+<p>and use the following UNO URL for connecting to soffice.</p>
+<pre><code>&quot;uno:socket,host=localhost,port=2002;urp,Negotiate=0,ForceSynchronous=0;StarOffice.ServiceManager&quot;
+</code></pre><p>There is an alternative to using UnoUrlResolver using lower level interfaces described in the following OOO wiki pages :</p>
+<ol>
+<li><a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/ProUNO/Opening_a_Connection" target="_blank">Opening a Connection</a></li>
+<li><a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/ProUNO/Creating_the_Bridge" target="_blank">Creating a Bridge</a></li>
+<li><a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/ProUNO/Closing_a_Connection" target="_blank">Closing a connection</a></li>
+<li><a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/ProUNO/Example:_A_Connection_Aware_Client" target="_blank">Advanced Java example showing how the above steps are used</a></li>
+</ol>
+<p>The complete code for the above can be found at $LOROOT/instdir/sdk/examples/DevelopersGuide/ProfUNO/InterprocessConn</p>
+<p>Since we focus on in-process calc extensions, discussion on the above is outside the scope of this series of posts.</p>
 
                     
                     </section>
@@ -474,10 +571,8 @@
         </div>
 
         
-        <a href="../calcarch/core.html" class="navigation navigation-prev " aria-label="Previous page: core"><i class="fa fa-angle-left"></i></a>
+        <a href="../extensions/part2.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Part2"><i class="fa fa-angle-left"></i></a>
         
-        
-        <a href="../calcarch/filter.html" class="navigation navigation-next " aria-label="Next page: filter"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
