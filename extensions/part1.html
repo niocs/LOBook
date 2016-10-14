@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.1" data-basepath=".." data-revision="Wed Oct 12 2016 01:36:54 GMT+0530 (IST)">
+    <div class="book" data-level="4.1" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -214,13 +214,28 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="misc/devserver.html">
+        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+            
+                
+                    <a href="../misc/sdksetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        sdksetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="misc/devserver.html">
             
                 
                     <a href="../misc/devserver.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         devserver
                     </a>
@@ -229,13 +244,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="misc/bibisect.html">
+        <li class="chapter " data-level="3.4" data-path="misc/bibisect.html">
             
                 
                     <a href="../misc/bibisect.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         bibisect
                     </a>
@@ -244,13 +259,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="misc/mdds.html">
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
             
                 
                     <a href="../misc/mdds.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         mdds
                     </a>
@@ -259,13 +274,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="misc/namespaces.html">
+        <li class="chapter " data-level="3.6" data-path="misc/namespaces.html">
             
                 
                     <a href="../misc/namespaces.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.5.</b>
+                            <b>3.6.</b>
                         
                         namespaces
                     </a>
@@ -274,13 +289,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.6" data-path="misc/patchchecklist.html">
+        <li class="chapter " data-level="3.7" data-path="misc/patchchecklist.html">
             
                 
                     <a href="../misc/patchchecklist.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.6.</b>
+                            <b>3.7.</b>
                         
                         patchchecklist
                     </a>
@@ -479,6 +494,12 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="libreoffice-extension-development-with-c-part-1-getting-to-know-uno">Libreoffice extension development with C++ - Part 1 - Getting to know UNO</h1>
+<h3 id="audience-selection">Audience selection</h3>
+<ol>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can skip this part and start with <a href="part4.html">Part4</a></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <a href="#buildsec">code download and build/run section</a></li>
+</ol>
+<hr>
 <p>UNO stands for Universal Network Objects and is the base component technology for LO. For a great coverage on UNO refer to 
 <a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/OpenOffice.org_Developers_Guide" target="_blank">https://wiki.openoffice.org/wiki/Documentation/DevGuide/OpenOffice.org_Developers_Guide</a>. This is mostly compatible with LO as per
 LO dev wiki. This blog is heavily based on this wiki.</p>
@@ -621,41 +642,6 @@ interface XComponentContext : XInterface
 <li><em>Implementation properties</em></li>
 <li><em>Service properties</em></li>
 </ol>
-<h2 id="setup-lo-sdk-after-building-lo">Setup LO SDK after building LO</h2>
-<p>Go to $LOROOT/instdir/sdk and run :</p>
-<pre><code>$ ./setsdkenv_unix
-</code></pre><p>hit enter for all questions, letting it use the defaults except for &quot;Automatic deployment of UNO components (YES/NO) [YES]: &quot; type NO.</p>
-<p>This will show something like the following after it finishes.</p>
-<pre><code> ************************************************************************
- * ... your SDK environment has been prepared.
- * For each time you want to use this configured SDK environment, you
- * have to run the &quot;setsdkenv_unix&quot; script file!
- * Alternatively can you source one of the scripts
- *   &quot;/home/dennis/libreoffice5.3_sdk/dennis-work/setsdkenv_unix.sh&quot;
- * to get an environment without starting a new shell.
- ************************************************************************
-
-
- ************************************************************************
- *
- * SDK environment is prepared for Linux
- *
- * SDK = /ssd1/work/dennis/core/instdir/sdk
- * Office = /ssd1/work/dennis/core/instdir/sdk/..
- * Make = /usr/bin
- * Zip = /usr/bin
- * cat = /usr/bin
- * sed = /usr/bin
- * C++ Compiler = /usr/bin
- * Java = /usr
- * SDK Output directory = /home/dennis/libreoffice5.3_sdk
- * Auto deployment = NO
- *
- ************************************************************************
-</code></pre><p>First section says that <strong>we need to</strong></p>
-<pre><code class="lang-bash">$ <span class="hljs-built_in">source</span> /home/dennis/libreoffice5.<span class="hljs-number">3</span>_sdk/dennis-work/setsdkenv_unix.sh
-</code></pre>
-<p>in shell <strong>before</strong> trying to build our own extensions/UNO standalone programs.</p>
 <h2 id="example-c-program-that-shows-how-to-access-lo-from-a-standalone-program">Example C++ program that shows how to access LO from a standalone program</h2>
 <pre><code class="lang-cpp"><span class="hljs-comment">// This program is a simplified version of</span>
 <span class="hljs-comment">// http://api.libreoffice.org/examples/DevelopersGuide/ProfUNO/SimpleBootstrap_cpp/SimpleBootstrap_cpp.cxx</span>
@@ -731,11 +717,6 @@ Reference&lt; XComponent &gt; xComponent = xDesktop2-&gt;loadComponentFromURL(
                                       OUString( <span class="hljs-string">&quot;_blank&quot;</span> ), <span class="hljs-number">0</span>,
                                       Sequence &lt; ::com::sun::star::beans::PropertyValue &gt;() );
 </code></pre>
-<p>The complete C++ program that creates a Desktop object and loads an empty calc document can be built and run as :</p>
-<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/UNOCreateUseObject.git
-$ make
-$ make CreateUseObject.run
-</code></pre>
 <p>The above is an example of getting an object from another object. There are two different cases for getting objects from other objects :</p>
 <ol>
 <li><p>Objects(special ones) that are related to features that are integral part of an object can be obtained by get*() methods.
@@ -747,6 +728,16 @@ After loading a document these methods can be used to get Sheets/Text/Drawpages 
 The type <code>Any</code> is explained in next part.</p>
 </li>
 </ol>
+<hr>
+<h3 id="-a-name-buildsec-a-download-build-and-run-the-program"><a name="buildsec"></a>Download, build and run the program</h3>
+<p>The complete C++ program that creates a Desktop object and loads an empty calc document can be built and run as :</p>
+<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/UNOCreateUseObject.git
+$ <span class="hljs-built_in">cd</span> UNOCreateUseObject
+$ make
+$ make CreateUseObject.run
+</code></pre>
+<p>If everything goes well you should see the string <strong>&quot;remote ServiceManager is available&quot;</strong> in the output after running <code>make CreateUseObject.run</code>.</p>
+<hr>
 
                     
                     </section>

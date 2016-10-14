@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.2" data-basepath=".." data-revision="Wed Oct 12 2016 01:36:54 GMT+0530 (IST)">
+    <div class="book" data-level="4.2" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -214,13 +214,28 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="misc/devserver.html">
+        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+            
+                
+                    <a href="../misc/sdksetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        sdksetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="misc/devserver.html">
             
                 
                     <a href="../misc/devserver.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         devserver
                     </a>
@@ -229,13 +244,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="misc/bibisect.html">
+        <li class="chapter " data-level="3.4" data-path="misc/bibisect.html">
             
                 
                     <a href="../misc/bibisect.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         bibisect
                     </a>
@@ -244,13 +259,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="misc/mdds.html">
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
             
                 
                     <a href="../misc/mdds.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         mdds
                     </a>
@@ -259,13 +274,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="misc/namespaces.html">
+        <li class="chapter " data-level="3.6" data-path="misc/namespaces.html">
             
                 
                     <a href="../misc/namespaces.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.5.</b>
+                            <b>3.6.</b>
                         
                         namespaces
                     </a>
@@ -274,13 +289,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.6" data-path="misc/patchchecklist.html">
+        <li class="chapter " data-level="3.7" data-path="misc/patchchecklist.html">
             
                 
                     <a href="../misc/patchchecklist.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.6.</b>
+                            <b>3.7.</b>
                         
                         patchchecklist
                     </a>
@@ -479,6 +494,12 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="libreoffice-extension-development-with-c-part-2-working-with-a-spreadsheet-document">Libreoffice extension development with C++ - Part 2 - Working with a Spreadsheet document</h1>
+<h3 id="audience-selection">Audience selection</h3>
+<ol>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can skip this part and start with <a href="part4.html">Part4</a></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <a href="#buildsec">code download and build/run section</a></li>
+</ol>
+<hr>
 <p>In this part we extend the program developed in Part 1 <a href="https://github.com/niocs/UNOCreateUseObject" target="_blank">code</a>
 to manipulate the spreadsheet further.</p>
 <ol>
@@ -596,11 +617,6 @@ as an exercise.</p>
 </code></pre>
 </li>
 </ol>
-<p>The complete C++ program can be compiled and run using :</p>
-<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/ManipulateSpreadsheet.git
-$ make
-$ make ManipulateSpreadsheet.run
-</code></pre>
 <h2 id="types">Types</h2>
 <p>The relation between UNO types like any, string, short etc to the corresponding C++ types can be seen at
 <a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/FirstSteps/Common_Types" target="_blank">CommonTypes</a></p>
@@ -719,6 +735,43 @@ sequence&lt; com.sun.star.table.CellRangeAddress &gt; getRangeAddresses()
 </code></pre><p>We used <code>getCells()</code> to get hold of <code>XEnumerationAccess</code> object to iterate through the cells with formula.</p>
 </li>
 </ol>
+<hr>
+<h3 id="-a-name-buildsec-a-download-build-and-run-the-program"><a name="buildsec"></a>Download, build and run the program</h3>
+<p>The complete C++ program can be compiled and run using :</p>
+<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/ManipulateSpreadsheet.git
+$ <span class="hljs-built_in">cd</span> ManipulateSpreadsheet
+$ make
+$ make ManipulateSpreadsheet.run
+</code></pre>
+<p>After running <code>make ManipulateSpreadsheet.run</code> you should see the following strings in the terminal</p>
+<pre><code>remote ServiceManager is available.
+opened spreadsheet document...
+&gt;&gt;&gt; xSpreadsheets container has elements each of type = com.sun.star.sheet.XSpreadsheet
+&gt;&gt;&gt; Formula cell in column = 0, row = 2, with formula = =SUM(A1:A2)
+</code></pre><p>In addition you should see in Calc a sheet named &quot;MySheet&quot; with the following contents :</p>
+<ul>
+<li>Cell A1 has a number 105</li>
+<li>Cell A2 has a number 501</li>
+<li>Cell A3 has a formula = SUM(A1:A2) and has value = 606.</li>
+</ul>
+<h4 id="troubleshooting">Troubleshooting :</h4>
+<p>If you see a crash and stack trace after running <code>make ManipulateSpreadsheet.run</code> like</p>
+<pre><code>Application Error
+
+Fatal exception: Signal 6
+Stack:
+/ssd1/work/dennis/core/instdir/program/libuno_sal.so.3(+0x63706)[0x7f9eae7c1706]
+/ssd1/work/dennis/core/instdir/program/libuno_sal.so.3(+0x638ef)[0x7f9eae7c18ef]
+/ssd1/work/dennis/core/instdir/program/libuno_sal.so.3(+0x63a30)[0x7f9eae7c1a30]
+/lib64/libc.so.6(+0x34770)[0x7f9eae04f770]
+/lib64/libc.so.6(gsignal+0x35)[0x7f9eae04f6f5]
+/lib64/libc.so.6(abort+0x16a)[0x7f9eae0512fa]
+...
+</code></pre><p>you need to go to <code>/tmp/</code> in your machine and see if any named pipes belonging to previous LO instances (could be created by LO runs in Part1) that looks like :</p>
+<pre><code>OSL_PIPE_1000_SingleOfficeIPC_1198aa9b6c6d53d496efee257b794f7
+OSL_PIPE_1000_uno48105118116146272311915591153248511282101
+</code></pre><p>Try removing these files before retrying the build/run instructions.</p>
+<hr>
 
                     
                     </section>

@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>patches | Libreoffice Blog</title>
+        <title>sdksetup | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../patches/rsu.html" />
+    <link rel="next" href="../misc/devserver.html" />
     
     
-    <link rel="prev" href="../index.html" />
+    <link rel="prev" href="../misc/devsetup.html" />
     
 
         
@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="1" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
+    <div class="book" data-level="3.2" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -66,7 +66,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1" data-path="patches/index.html">
+        <li class="chapter " data-level="1" data-path="patches/index.html">
             
                 
                     <a href="../patches/index.html">
@@ -214,7 +214,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+        <li class="chapter active" data-level="3.2" data-path="misc/sdksetup.html">
             
                 
                     <a href="../misc/sdksetup.html">
@@ -493,7 +493,41 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="patches">patches</h1>
+                        <h1 id="setup-lo-sdk-after-building-lo-from-source">Setup LO SDK after building LO from source</h1>
+<p>Go to $LOROOT/instdir/sdk and run :</p>
+<pre><code>$ ./setsdkenv_unix
+</code></pre><p>hit enter for all questions, letting it use the defaults except for &quot;Automatic deployment of UNO components (YES/NO) [YES]: &quot; type NO.</p>
+<p>This will show something like the following after it finishes.</p>
+<pre><code> ************************************************************************
+ * ... your SDK environment has been prepared.
+ * For each time you want to use this configured SDK environment, you
+ * have to run the &quot;setsdkenv_unix&quot; script file!
+ * Alternatively can you source one of the scripts
+ *   &quot;/home/dennis/libreoffice5.3_sdk/dennis-work/setsdkenv_unix.sh&quot;
+ * to get an environment without starting a new shell.
+ ************************************************************************
+
+
+ ************************************************************************
+ *
+ * SDK environment is prepared for Linux
+ *
+ * SDK = /ssd1/work/dennis/core/instdir/sdk
+ * Office = /ssd1/work/dennis/core/instdir/sdk/..
+ * Make = /usr/bin
+ * Zip = /usr/bin
+ * cat = /usr/bin
+ * sed = /usr/bin
+ * C++ Compiler = /usr/bin
+ * Java = /usr
+ * SDK Output directory = /home/dennis/libreoffice5.3_sdk
+ * Auto deployment = NO
+ *
+ ************************************************************************
+</code></pre><p>As the first section says, <strong>you need to</strong> run following in the shell <strong>before</strong> trying to build our own extensions/UNO standalone programs.</p>
+<pre><code class="lang-bash">$ <span class="hljs-built_in">source</span> /home/dennis/libreoffice5.<span class="hljs-number">3</span>_sdk/dennis-work/setsdkenv_unix.sh
+</code></pre>
+<p>NOTE : <em>You can also add the above line to <code>~/.bashrc</code> so that this line is run automatically every time you start terminal.</em></p>
 
                     
                     </section>
@@ -504,10 +538,10 @@
         </div>
 
         
-        <a href="../index.html" class="navigation navigation-prev " aria-label="Previous page: Introduction"><i class="fa fa-angle-left"></i></a>
+        <a href="../misc/devsetup.html" class="navigation navigation-prev " aria-label="Previous page: devsetup"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../patches/rsu.html" class="navigation navigation-next " aria-label="Next page: Red squiggly underline bug"><i class="fa fa-angle-right"></i></a>
+        <a href="../misc/devserver.html" class="navigation navigation-next " aria-label="Next page: devserver"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>

@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4" data-basepath=".." data-revision="Wed Oct 12 2016 01:36:54 GMT+0530 (IST)">
+    <div class="book" data-level="4" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -214,13 +214,28 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="misc/devserver.html">
+        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+            
+                
+                    <a href="../misc/sdksetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        sdksetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="misc/devserver.html">
             
                 
                     <a href="../misc/devserver.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         devserver
                     </a>
@@ -229,13 +244,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="misc/bibisect.html">
+        <li class="chapter " data-level="3.4" data-path="misc/bibisect.html">
             
                 
                     <a href="../misc/bibisect.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         bibisect
                     </a>
@@ -244,13 +259,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="misc/mdds.html">
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
             
                 
                     <a href="../misc/mdds.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         mdds
                     </a>
@@ -259,13 +274,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="misc/namespaces.html">
+        <li class="chapter " data-level="3.6" data-path="misc/namespaces.html">
             
                 
                     <a href="../misc/namespaces.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.5.</b>
+                            <b>3.6.</b>
                         
                         namespaces
                     </a>
@@ -274,13 +289,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.6" data-path="misc/patchchecklist.html">
+        <li class="chapter " data-level="3.7" data-path="misc/patchchecklist.html">
             
                 
                     <a href="../misc/patchchecklist.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.6.</b>
+                            <b>3.7.</b>
                         
                         patchchecklist
                     </a>
@@ -480,7 +495,18 @@
                     
                         <h1 id="developing-libreoffice-extensions-in-c">Developing LibreOffice Extensions in C++.</h1>
 <p>This is a ongoing series of posts on developing C++ LO extensions mainly for Calc. It is heavily based on <a href="https://wiki.openoffice.org/wiki/Documentation/DevGuide/OpenOffice.org_Developers_Guide" target="_blank">https://wiki.openoffice.org/wiki/Documentation/DevGuide/OpenOffice.org_Developers_Guide</a> but with more emphasis on starting early with C++ and Calc through complete code examples. The complete code for every examples mentioned in the blog are meant for GNU/Linux systems. It might also work on MS Windows and MacOSX but we do not support those yet.</p>
-<p>Prerequisites : A fair grasp of C++, Linux based build systems using cmdline. The reader must be able to build LO from source code. For this there is another article at <a href="../misc/devsetup.html">devsetup</a></p>
+<h2 id="types-of-audience-and-their-prerequisites">Types of audience and their prerequisites</h2>
+<ol>
+<li><p>Developers who wants to understand how to write LO extensions in C++. We refer to this type of audience as <strong>AUD-A</strong>.</p>
+<p>Prerequisites : A fair grasp of C++, Linux based build systems using cmdline. The reader must first build LO from source code. If you don&apos;t know how to do this yet, first please follow the article at <a href="../misc/devsetup.html">devsetup</a>. Then must follow instructions at <a href="../misc/sdksetup.html">SDKSetup</a> to setup LO SDK. The reader needs to start from <a href="part1.html">Part1</a>. Unless otherwise indicated they are the default audience for all content.</p>
+</li>
+<li><p>Developers who wants to build our extensions from source without understanding the code. We refer to this type of audience as <strong>AUD-B</strong>.</p>
+<p>Prerequisites : A fair grasp of Linux based build systems using cmdline. The reader must first build LO from source code. If you don&apos;t know how to do this yet, first please follow the article at <a href="../misc/devsetup.html">devsetup</a>. Then must follow instructions at <a href="../misc/sdksetup.html">SDKSetup</a> to setup LO SDK. The reader can start from any part of the blog series.</p>
+</li>
+<li><p>Users/Testers who wants to just want to run/test our extensions. We refer to this type of audience as <strong>AUD-C</strong>.</p>
+<p>Prerequisites : Access to a <strong>Fedora 24 Linux 64 bit</strong> box (as we supply prebuilt extensions only for this distro), LibreOffice Calc version &gt;= 5.1. You can skip Part1, Part2 and Part3 as they do not create extensions. <a href="part4.html">Part4</a> is your starting point.</p>
+</li>
+</ol>
 
                     
                     </section>

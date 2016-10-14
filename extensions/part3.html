@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.3" data-basepath=".." data-revision="Wed Oct 12 2016 01:36:54 GMT+0530 (IST)">
+    <div class="book" data-level="4.3" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -214,13 +214,28 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="misc/devserver.html">
+        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+            
+                
+                    <a href="../misc/sdksetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        sdksetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="misc/devserver.html">
             
                 
                     <a href="../misc/devserver.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         devserver
                     </a>
@@ -229,13 +244,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="misc/bibisect.html">
+        <li class="chapter " data-level="3.4" data-path="misc/bibisect.html">
             
                 
                     <a href="../misc/bibisect.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         bibisect
                     </a>
@@ -244,13 +259,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="misc/mdds.html">
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
             
                 
                     <a href="../misc/mdds.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         mdds
                     </a>
@@ -259,13 +274,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="misc/namespaces.html">
+        <li class="chapter " data-level="3.6" data-path="misc/namespaces.html">
             
                 
                     <a href="../misc/namespaces.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.5.</b>
+                            <b>3.6.</b>
                         
                         namespaces
                     </a>
@@ -274,13 +289,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.6" data-path="misc/patchchecklist.html">
+        <li class="chapter " data-level="3.7" data-path="misc/patchchecklist.html">
             
                 
                     <a href="../misc/patchchecklist.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.6.</b>
+                            <b>3.7.</b>
                         
                         patchchecklist
                     </a>
@@ -479,12 +494,18 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="libreoffice-extension-development-with-c-part-3-how-uno-objects-connect-and-communicate-with-each-other">Libreoffice extension development with C++ - Part 3 - How UNO objects connect and communicate with each other.</h1>
+<h3 id="audience-selection">Audience selection</h3>
+<ol>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can skip this part and start with <a href="part4.html">Part4</a></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <a href="#buildsec">code download and build/run section</a></li>
+</ol>
+<hr>
 <blockquote>
 <p>UNO objects in different environments connect via the <strong>interprocess bridge</strong>. You can execute calls on UNO object instances, that are located in a different process. This is done by converting the method name and the arguments into a byte stream representation, and sending this package to the remote process, for example, through a socket connection.</p>
 </blockquote>
 <p>By default LO will not listen on a resource for security reasons. We can make LO listen for UNO connections from external processess by
 starting soffice with extra param :</p>
-<pre><code>$ soffice --accept=&quot;socket,host=0,port=2002;urp;&quot; --calc
+<pre><code>$ $LOROOT/instdir/program/soffice --accept=&quot;socket,host=0,port=2002;urp;&quot; --calc
 </code></pre><p>After running, it can be verified using netstat -na, and it would show something like :</p>
 <pre><code>Proto Recv-Q Send-Q Local Address           Foreign Address         State      
 tcp        0      0 0.0.0.0:2002            0.0.0.0:*               LISTEN
@@ -535,14 +556,21 @@ Reference&lt; XUnoUrlResolver &gt; xResolver( xInstance, UNO_QUERY );
 <p>Note that the returned object is typed as <code>Reference&lt; XInterface &gt;</code> so we need to query for the required interface to use it.</p>
 </li>
 </ol>
-<p>The complete runnable C++ code for the above can be downloaded and run as :</p>
+<hr>
+<h3 id="-a-name-buildsec-a-download-build-and-run-the-program"><a name="buildsec"></a>Download, build and run the program</h3>
+<p>First run LO as :</p>
+<pre><code>$ $LOROOT/instdir/program/soffice --accept=&quot;socket,host=0,port=2002;urp;&quot; --calc
+</code></pre><p>Then the C++ code for this section can be downloaded and run as :</p>
 <pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/niocs/ImportingUNOObject.git
+$ <span class="hljs-built_in">cd</span> ImportingUNOObject
 $ make
 $ make ImportUNOObject.run
 </code></pre>
+<p>If it worked, you will see the string <strong>&quot;Connected successfully to the office&quot;</strong> in the output of <code>make ImportUNOObject.run</code>.</p>
 <p>If you run the above <strong>before</strong> starting soffice with <em>listen instructions for port 2002</em>, the program will show the exception caught and will print something like :</p>
 <pre><code>Error: Connector : couldn&apos;t connect to socket
 </code></pre><p>along with some warnings and <code>make</code> errors which can be ignored. The above error means the program was not able to connect to soffice to import the UNO object.</p>
+<hr>
 <p>Usage of UnoUrlResolver has some disadvantages :</p>
 <ol>
 <li>We won&apos;t be notified when brige terminates.</li>

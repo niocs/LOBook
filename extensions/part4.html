@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.4" data-basepath=".." data-revision="Wed Oct 12 2016 01:36:54 GMT+0530 (IST)">
+    <div class="book" data-level="4.4" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -212,13 +212,28 @@
             
         </li>
     
-        <li class="chapter " data-level="3.2" data-path="misc/devserver.html">
+        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+            
+                
+                    <a href="../misc/sdksetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        sdksetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="misc/devserver.html">
             
                 
                     <a href="../misc/devserver.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.2.</b>
+                            <b>3.3.</b>
                         
                         devserver
                     </a>
@@ -227,13 +242,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="misc/bibisect.html">
+        <li class="chapter " data-level="3.4" data-path="misc/bibisect.html">
             
                 
                     <a href="../misc/bibisect.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.3.</b>
+                            <b>3.4.</b>
                         
                         bibisect
                     </a>
@@ -242,13 +257,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="misc/mdds.html">
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
             
                 
                     <a href="../misc/mdds.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.4.</b>
+                            <b>3.5.</b>
                         
                         mdds
                     </a>
@@ -257,13 +272,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.5" data-path="misc/namespaces.html">
+        <li class="chapter " data-level="3.6" data-path="misc/namespaces.html">
             
                 
                     <a href="../misc/namespaces.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.5.</b>
+                            <b>3.6.</b>
                         
                         namespaces
                     </a>
@@ -272,13 +287,13 @@
             
         </li>
     
-        <li class="chapter " data-level="3.6" data-path="misc/patchchecklist.html">
+        <li class="chapter " data-level="3.7" data-path="misc/patchchecklist.html">
             
                 
                     <a href="../misc/patchchecklist.html">
                         <i class="fa fa-check"></i>
                         
-                            <b>3.6.</b>
+                            <b>3.7.</b>
                         
                         patchchecklist
                     </a>
@@ -477,6 +492,12 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="libreoffice-extension-development-with-c-part-4-build-a-simple-component-with-two-services">Libreoffice extension development with C++ - Part 4 - Build a simple Component with two services.</h1>
+<h3 id="audience-selection">Audience selection</h3>
+<ol>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can jump directly to <strong><a href="#prebuilt">Test the prebuilt extension</a></strong></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <strong><a href="#buildsec">Download, build and test the extension</a></strong></li>
+</ol>
+<hr>
 <p>Note that reading previous posts are a prerequisite for following this part unless you know how to setup LO SDK env and have a good understanding of UNO concepts.</p>
 <h2 id="what-we-are-about-to-do">What we are about to do ?</h2>
 <ol>
@@ -807,7 +828,10 @@ Reference&lt; XInterface &gt; <span class="hljs-function">SAL_CALL <span class="
 
 }
 </code></pre>
-<h2 id="steps-5-and-6">Steps 5 and 6</h2>
+<hr>
+<p>_</p>
+<h2 id="-a-name-buildsec-a-download-build-and-test-the-extension"><a name="buildsec"></a>Download, build and test the extension</h2>
+<h3 id="steps-5-and-6">Steps 5 and 6</h3>
 <p>In this section we use UNO SDK tools to create C++ header files from .idl files (ours and the dependent LO buildin .idl files) and build the component &quot;SimpleComponent&quot; from service implementation cxx files with the hdl files generated and package it into an extension file named as &quot;SimpleComponent.oxt&quot;. Doing these operations manually is tedious hence we have a Makefile reused from the LO SDK&apos;s sample extensions.</p>
 <p>The whole project can be downloaded and built using the following steps.</p>
 <pre><code>$ git clone https://github.com/niocs/SimpleUNOComponent.git
@@ -815,14 +839,13 @@ $ cd SimpleUNOComponent
 $ make
 </code></pre><p>The extension created (<code>SimpleComponent.oxt</code>) by the above will go to a path that looks like <code>/home/dennis/libreoffice5.3_sdk/LINUXexample.out/bin/</code> unless you used a non default path while setting up SDK env.
 You can also see the generated include files from idl files in <code>/home/dennis/libreoffice5.3_sdk/LINUXexample.out/inc/</code>.</p>
-<h2 id="step-7">Step 7</h2>
-<p>Now we need to install the extension file <code>SimpleComponent.oxt</code> to LO. Run Calc and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;. Now exit Calc.</p>
-<p><em>Note that the LO version and the SDK must match for the extension to work. So if you built LO from git master branch, then use the SDK in <code>$LOROOT/instdir/sdk/</code> to build the extension.</em></p>
-<h2 id="step-8">Step 8</h2>
+<h3 id="step-7">Step 7</h3>
+<p>Now we need to install the extension file <code>SimpleComponent.oxt</code> at <code>/home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/</code> to LO. Run Calc and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;. Now exit Calc.</p>
+<h3 id="step-8">Step 8</h3>
 <p>Lets now test if the extension is working. One way is we can instantiate the services we implemented, via LibreOffice Basic macros. For this we need to enable macros in Calc.
 Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from unstrusted source&quot;. Restart Calc now.</p>
 <p>You could either follow the below instruction to setup macro and controls to execute it or just open the <code>SimpleComponent.ods</code> provided in the git repo. While opening click enable macros when asked. Now click on the button &quot;Click to test our extension&quot;. On clicking if everything went well, it should show the messages from the <code>MyService1</code>&apos;s <code>methodOne()</code> and <code>MyService2</code>&apos;s <code>methodTwo()</code>.</p>
-<h3 id="creating-an-ods-file-with-macro-to-access-our-extension">Creating an ods file with macro to access our extension.</h3>
+<h4 id="creating-an-ods-file-with-macro-to-access-our-extension">Creating an ods file with macro to access our extension.</h4>
 <p>Save the sheet as SimpleComponent.ods . Go to Tools &gt; Macros &gt; Organize Macros &gt; LibreofficeDev Basic &gt; Select &quot;Standard&quot; module inside &quot;SimpleComponent.ods&quot; on the left section &gt; Click &quot;New&quot; button on the right section. Now it will open a Macro editor. Now insert the following Basic funtion named <code>TestMyExtension</code> to instantiate and call the methods on the two services.</p>
 <pre><code class="lang-vbscript"><span class="hljs-keyword">Sub</span> TestMyExtension
     <span class="hljs-keyword">Dim</span> oService1Inst
@@ -842,11 +865,26 @@ Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt
 <span class="hljs-keyword">End</span> <span class="hljs-keyword">Sub</span>
 </code></pre>
 <p>Lets now create a push button control. Go to View &gt; Toolbars &gt; Form Controls &gt; Click on Design Mode in the new toolbar &gt; Click on pushbutton control and draw in an empty sheet. Right click on the Push button and click &quot;Control...&quot; and change Label to &quot;Click to test our extension&quot;. Go to Events tab and set Execution action &gt; Assign Macro &gt; Browse and select <code>TestMyExtension</code> macro we created above.</p>
-<h2 id="step-9">Step 9</h2>
+<h3 id="step-9">Step 9</h3>
 <p>One other method to test if our extension is working is to create a standalone test C++ main program like we did in <a href="part1.html">Part 1</a> and <a href="part2.html">Part 2</a> of this article.
 The complete test program <code>TestSimpleComponent.cxx</code> is provided in the git repo. So you could test the extension by issuing</p>
 <pre><code>$ make TestSimpleComponent.run
-</code></pre>
+</code></pre><hr>
+<h2 id="-a-name-prebuilt-a-test-the-prebuilt-extension"><a name="prebuilt"></a>Test the prebuilt extension</h2>
+<p>Download the extension as :</p>
+<pre><code>$ git clone https://github.com/niocs/SimpleUNOComponent.git
+$ cd SimpleUNOComponent
+</code></pre><ul>
+<li>In this directory you will see a file called <code>SimpleComponent.oxt</code>. This is the prebuilt extension. Now open Calc and and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;.</li>
+<li>Now we need to allow macros in Calc if you have not already. Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from unstrusted source&quot;.</li>
+<li>Restart Calc now.</li>
+<li>In the <code>SimpleUNOComponent/</code> directory there is a file called <code>SimpleComponent.ods</code>. This is a spreadsheet file with macros embedded to test the extension. Open this file with calc. While opening click enable macros when asked.</li>
+<li><p>Now click on the button &quot;Click to test our extension&quot; inside the sheet. On clicking, if everything went well, it should show a messagebox showing the text</p>
+<p><code>called methodOne() of Service1 implementation : :SERVICE1:. and called methodTwo() of MyService2 implementation: :SERVICE2:</code>.</p>
+</li>
+</ul>
+<hr>
+
                     
                     </section>
                 
