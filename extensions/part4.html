@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.4" data-basepath=".." data-revision="Fri Oct 14 2016 20:12:32 GMT+0530 (IST)">
+    <div class="book" data-level="4.4" data-basepath=".." data-revision="Sat Oct 15 2016 17:55:30 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -840,7 +840,14 @@ $ make
 </code></pre><p>The extension created (<code>SimpleComponent.oxt</code>) by the above will go to a path that looks like <code>/home/dennis/libreoffice5.3_sdk/LINUXexample.out/bin/</code> unless you used a non default path while setting up SDK env.
 You can also see the generated include files from idl files in <code>/home/dennis/libreoffice5.3_sdk/LINUXexample.out/inc/</code>.</p>
 <h3 id="step-7">Step 7</h3>
-<p>Now we need to install the extension file <code>SimpleComponent.oxt</code> at <code>/home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/</code> to LO. Run Calc and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;. Now exit Calc.</p>
+<p>Now we need to install the extension file <code>SimpleComponent.oxt</code> at <code>/home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/</code> to LO.
+There are two ways to do this : one via the extension manager and other via <code>unopkg</code> commandline tool. Do only one of the following substeps :</p>
+<ul>
+<li>Extension-Manager method : Open Calc and and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;. You may need to restart Calc to take effect.</li>
+<li>CommandLine method : just run the below command in terminal as normal user.<pre><code>$ unopkg add &lt;/path/to/&gt;SimpleComponent.oxt
+</code></pre>You can remove an extension with its name (without path) via unopkg, for example to remove SimpleComponent.oxt  :<pre><code>$ unopkg remove SimpleComponent.oxt
+</code></pre></li>
+</ul>
 <h3 id="step-8">Step 8</h3>
 <p>Lets now test if the extension is working. One way is we can instantiate the services we implemented, via LibreOffice Basic macros. For this we need to enable macros in Calc.
 Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from unstrusted source&quot;. Restart Calc now.</p>
@@ -875,15 +882,23 @@ The complete test program <code>TestSimpleComponent.cxx</code> is provided in th
 <pre><code>$ git clone https://github.com/niocs/SimpleUNOComponent.git
 $ cd SimpleUNOComponent
 </code></pre><ul>
-<li>In this directory you will see a file called <code>SimpleComponent.oxt</code>. This is the prebuilt extension. Now open Calc and and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;.</li>
-<li>Now we need to allow macros in Calc if you have not already. Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from unstrusted source&quot;.</li>
-<li>Restart Calc now.</li>
+<li>In <code>SimpleUNOComponent</code> directory you will see a file called <code>SimpleComponent.oxt</code>. This is the prebuilt extension.</li>
+<li>There are two recommended ways of installing extensions - one via the extension manager and other via <code>unopkg</code> commandline tool. Do only one of the following substeps :<ul>
+<li>Extension-Manager method : Open Calc and and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;. You may need to restart Calc to take effect.</li>
+<li>CommandLine method : just run the below command in terminal as normal user.<pre><code>$ unopkg add &lt;/path/to/&gt;SimpleComponent.oxt
+</code></pre>You can remove an extension with its name (without path) via unopkg, for example to remove SimpleComponent.oxt  :<pre><code>$ unopkg remove SimpleComponent.oxt
+</code></pre></li>
+</ul>
+</li>
+<li>Now we need to allow macros in Calc if you have not already. Open Calc and go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from unstrusted source&quot;. Restart Calc. This is a one time process.</li>
 <li>In the <code>SimpleUNOComponent/</code> directory there is a file called <code>SimpleComponent.ods</code>. This is a spreadsheet file with macros embedded to test the extension. Open this file with calc. While opening click enable macros when asked.</li>
 <li><p>Now click on the button &quot;Click to test our extension&quot; inside the sheet. On clicking, if everything went well, it should show a messagebox showing the text</p>
 <p><code>called methodOne() of Service1 implementation : :SERVICE1:. and called methodTwo() of MyService2 implementation: :SERVICE2:</code>.</p>
 </li>
 </ul>
 <hr>
+<p><strong>Note 1</strong> : <em>There can only be one soffice process per user per host, if one soffice process is running and you try to open a document with another soffice command via terminal, this request will be transfered to the already running soffice process and the document will be opened in a new window of the same process</em>.</p>
+<p><strong>Note 2</strong> : <em>An installed extension is common to all documents opened by soffice, there is no concept of per document extension. The extension should be prepared to handle the presence of multiple documents/ or calls from them</em></p>
 
                     
                     </section>
