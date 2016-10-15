@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.4" data-basepath=".." data-revision="Sat Oct 15 2016 17:55:30 GMT+0530 (IST)">
+    <div class="book" data-level="4.4" data-basepath=".." data-revision="Sat Oct 15 2016 21:21:11 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -899,6 +899,97 @@ $ cd SimpleUNOComponent
 <hr>
 <p><strong>Note 1</strong> : <em>There can only be one soffice process per user per host, if one soffice process is running and you try to open a document with another soffice command via terminal, this request will be transfered to the already running soffice process and the document will be opened in a new window of the same process</em>.</p>
 <p><strong>Note 2</strong> : <em>An installed extension is common to all documents opened by soffice, there is no concept of per document extension. The extension should be prepared to handle the presence of multiple documents/ or calls from them</em></p>
+<hr>
+<h2 id="-advanced-commands-for-building-the-extension-without-using-makefile">[Advanced] Commands for building the extension without using Makefile</h2>
+<ol>
+<li><p>First we create the directory <code>/home/$username/extensions/</code> and its sub directory <code>misc/SimpleComponent/</code> to store the .urd file(s) (UNO reflection data) containing binary type descriptions.</p>
+<pre><code>$ mkdir -p /home/$username/extensions/misc/SimpleComponent
+$ $LOROOT/instdir/sdk/bin/idlc -I. -I$LOROOT/instdir/sdk/idl -O/home/$username/extensions/misc/SimpleComponent some.idl
+</code></pre><p>This creates the file <code>/home/$username/extensions/misc/SimpleComponent/some.urd</code></p>
+</li>
+<li><p>Merge the .urd files into a registry database using regmerge. The registry database files have the extension .rdb (registry database). They contain binary data describing types in a tree-like structure starting with / as the root. The default key for type descriptions is the /UCR key (UNO core reflection).</p>
+<pre><code>$ $LOROOT/instdir/program/regmerge \
+    /home/$username/extensions/misc/SimpleComponent/SimpleComponent.uno.rdb \
+    /UCR /home/$username/extensions/misc/SimpleComponent/some.urd
+</code></pre><p>This will produce the file <code>/home/$username/extensions/misc/SimpleComponent/SimpleComponent.uno.rdb</code>.</p>
+</li>
+<li><p>This is a <strong>one time step</strong>, generate C++ header files for all of sdk&apos;s uno types from the LO&apos;s rdb files and put into <code>/home/$username/extensions/inc</code>, the common include location used for all of our future extensions including current one.</p>
+<pre><code>$ mkdir -p /home/$username/extensions/inc
+$ $LOROOT/instdir/sdk/bin/cppumaker -Gc -O/home/$username/extensions/inc  \
+                                    $LOROOT/instdir/program/types.rdb \
+                                    $LOROOT/instdir/program/types/offapi.rdb
+</code></pre></li>
+<li><p>Generate C++ header files (hpp and hdl) for <strong>new</strong> types and their dependencies from rdb files. </p>
+<pre><code>$ mkdir -p /home/$username/extensions/inc/SimpleComponent
+$ $LOROOT/instdir/sdk/bin/cppumaker -Gc -O/home/$username/extensions/inc/SimpleComponent  \
+                                    -Tinco.niocs.test.XSomething -Tinco.niocs.test.MyService1 -Tinco.niocs.test.MyService2 \
+                                    /home/$username/extensions/misc/SimpleComponent/SimpleComponent.uno.rdb \
+                                    -X$LOROOT/instdir/program/types.rdb -X$LOROOT/instdir/program/types/offapi.rdb
+</code></pre><p>In our case it will produce the following four files in <code>/home/$username/extensions/inc/SimpleComponent/inco/niocs/test/</code></p>
+<pre><code>MyService1.hpp
+XSomething.hpp
+XSomething.hdl
+MyService2.hpp
+</code></pre></li>
+<li><p>Compile <code>service1_impl.cxx</code> and <code>service2_impl.cxx</code> using the generated header files and sdk include files to create object files (*.o) and place them in <code>/home/$username/extensions/slo/SimpleComponent</code>.</p>
+<pre><code>$ mkdir -p /home/$username/extensions/slo/SimpleComponent
+$ gcc -c -fpic -fvisibility=hidden -O -I. -I/home/$username/extensions/inc \
+      -I/home/$username/extensions/inc/examples -I$LOROOT/instdir/sdk/include \
+      -I/home/$username/extensions/inc/SimpleComponent \
+      -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 \
+      -o/home/$username/extensions/slo/SimpleComponent/service1_impl.o service1_impl.cxx
+
+$ gcc -c -fpic -fvisibility=hidden -O -I. -I/home/$username/extensions/inc \
+      -I/home/$username/extensions/inc/examples -I$LOROOT/instdir/sdk/include \
+      -I/home/$username/extensions/inc/SimpleComponent \
+      -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 \
+      -o/home/$username/extensions/slo/SimpleComponent/service2_impl.o service2_impl.cxx
+</code></pre></li>
+<li><p>Create shared library (.so file) from the object files created in step 5 by linking with the sdk libs - cppu, cppuhelper and sal and place it in <code>/home/$username/extensions/lib/</code></p>
+<pre><code>$ mkdir -p /home/$username/extensions/lib
+$ g++ -shared -Wl,-z,origin &apos;-Wl,-rpath,&apos; -L/home/$username/extensions/lib \
+      -L$LOROOT/instdir/sdk/lib -L$LOROOT/instdir/program \
+      -o /home/$username/extensions/lib/SimpleComponent.uno.so \
+      /home/$username/extensions/slo/SimpleComponent/service1_impl.o \
+      /home/$username/extensions/slo/SimpleComponent/service2_impl.o \
+      -luno_cppuhelpergcc3 -luno_cppu -luno_sal
+</code></pre><p>We have finished creating the main part of the extension, now we need to package into a zip file along with meta files and the rdb file.</p>
+</li>
+<li><p>Remember that we already have <code>SimpleComponent.uno.rdb</code> in the path <code>/home/$username/extensions/misc/SimpleComponent</code>. Now create the <code>META-INF/manifest.xml</code> and <code>SimpleComponent.components</code> in <code>/home/$username/extensions/misc/SimpleComponent/</code> with the following contents :</p>
+<p><strong>manifest.xml</strong> : This xml file tells LO extension manager where to find the rdb file and a file <code>SimpleComponent.components</code> which would point to the .so shared lib.</p>
+<pre><code class="lang-xml"><span class="hljs-pi">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="hljs-doctype">&lt;!DOCTYPE manifest:manifest PUBLIC &quot;-//OpenOffice.org//DTD Manifest 1.0//EN&quot; &quot;Manifest.dtd&quot;&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">manifest:manifest</span> <span class="hljs-attribute">xmlns:manifest</span>=<span class="hljs-value">&quot;http://openoffice.org/2001/manifest&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">manifest:file-entry</span> <span class="hljs-attribute">manifest:media-type</span>=<span class="hljs-value">&quot;application/vnd.sun.star.uno-typelibrary;type=RDB&quot;</span>
+                    <span class="hljs-attribute">manifest:full-path</span>=<span class="hljs-value">&quot;SimpleComponent.uno.rdb&quot;</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">manifest:file-entry</span> <span class="hljs-attribute">manifest:media-type</span>=<span class="hljs-value">&quot;application/vnd.sun.star.uno-components;platform=Linux_x86_64&quot;</span>
+                    <span class="hljs-attribute">manifest:full-path</span>=<span class="hljs-value">&quot;SimpleComponent.components&quot;</span>/&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">manifest:manifest</span>&gt;</span>
+</code></pre>
+<p><strong>SimpleComponent.components</strong> : This is an xml file which tells the LO extension manager where to find the shared library and what all services are implemented along with the fully qualified implementation names.</p>
+<pre><code class="lang-xml"><span class="hljs-pi">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">components</span> <span class="hljs-attribute">xmlns</span>=<span class="hljs-value">&quot;http://openoffice.org/2010/uno-components&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">component</span> <span class="hljs-attribute">loader</span>=<span class="hljs-value">&quot;com.sun.star.loader.SharedLibrary&quot;</span> <span class="hljs-attribute">uri</span>=<span class="hljs-value">&quot;Linux_x86_64/SimpleComponent.uno.so&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">implementation</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">&quot;inco.niocs.test.my_sc_impl.MyService1&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-title">service</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">&quot;inco.niocs.test.MyService1&quot;</span>/&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">implementation</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">implementation</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">&quot;inco.niocs.test.my_sc_impl.MyService2&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-title">service</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">&quot;inco.niocs.test.MyService2&quot;</span>/&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">implementation</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">component</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">components</span>&gt;</span>
+</code></pre>
+<p>Copy the shared lib to <code>/home/$username/extensions/misc/SimpleComponent/Linux_x86_64</code>. We don&apos;t need the some.urd file anymore.
+Next we zip the contents in <code>/home/$username/extensions/misc/SimpleComponent</code> to a zip file named <code>SimpleComponent.oxt</code> in <code>/home/$username/extensions/bin/</code></p>
+<pre><code>$ mkdir -p /home/$username/extensions/misc/SimpleComponent/Linux_x86_64
+$ cp /home/$username/extensions/lib/SimpleComponent.uno.so /home/$username/extensions/misc/SimpleComponent/Linux_x86_64
+$ rm /home/$username/extensions/misc/SimpleComponent/some.urd
+$ cd /home/$username/extensions/misc/SimpleComponent/
+$ mkdir -p /home/$username/extensions/bin/
+$ zip -r ../../bin/SimpleComponent.oxt *
+</code></pre><p>The file <code>SimpleComponent.oxt</code> is the extension and can be installed to LO using <code>unopkg</code> command or LO extension manager.</p>
+</li>
+</ol>
 
                     
                     </section>
