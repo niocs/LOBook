@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>overview | Libreoffice Blog</title>
+        <title>PreFAQ | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../calcarch/core.html" />
+    <link rel="next" href="../extensions/part1.html" />
     
     
-    <link rel="prev" href="../calcarch/index.html" />
+    <link rel="prev" href="../extensions/index.html" />
     
 
         
@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="2.1" data-basepath=".." data-revision="Mon Oct 17 2016 15:44:32 GMT+0530 (IST)">
+    <div class="book" data-level="4.1" data-basepath=".." data-revision="Mon Oct 17 2016 15:44:32 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -118,7 +118,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="2.1" data-path="calcarch/overview.html">
+        <li class="chapter " data-level="2.1" data-path="calcarch/overview.html">
             
                 
                     <a href="../calcarch/overview.html">
@@ -325,7 +325,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="4.1" data-path="extensions/prefaq.html">
+        <li class="chapter active" data-level="4.1" data-path="extensions/prefaq.html">
             
                 
                     <a href="../extensions/prefaq.html">
@@ -508,32 +508,18 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="understanding-calc-code-structure">Understanding Calc code structure</h1>
-<p>I examined the code organization after downloading the libreoffice code by
-<code>$ git clone git://anongit.freedesktop.org/libreoffice/core libreoffice</code>
-The calc code is found within the directory sc/ in the source root dir. Following are the subdirs in sc/</p>
-<ul>
-<li>inc/ : there are various headers specific to the various modules within sc.</li>
-<li>qa/ : contains code specific to tests like unit test, performance test etc.</li>
-<li>sdi/ : contains files with the extension .sdi : Such files are special kind of source files that are compiled and converted to   header files.</li>
-<li>uiconfig/ : contains configuration files corresponding to the user interface like the toolbar, statusbar, menubar.</li>
-<li>source/ contains the main code. In order to find something specific try
-<a href="http://opengrok.libreoffice.org/" target="_blank">http://opengrok.libreoffice.org/</a> This is really great.</li>
-</ul>
-<p>In order to understand the basic code structure I first searched for documentation and found some of them helpful.
-The following diagram was obtained from <a href="http://kohei.us/files/slides_libocon_2011.pdf" target="_blank">here</a>
-<img src="corrected.png" alt="image"></p>
-<p>Data is organized as sheets, which contain columns, and each column contains cells of rows. The hierarchy is ScDocument-&gt;ScTable-&gt;ScColumn-&gt;ScBaseCell, ScValueCell, ScStringCell, ScFormulaCell etc.</p>
-<p><strong>But</strong> the above mentioned organization was changed, and this change has been explained in Life after Calc Core change by Kohei Yoshida, 2014. According to the new model, ScColumn has three sub components: Broadcaster, Text Width Script Type and Cell value.
-A Cell value can be a string block, formula block, double block, text object block.
-The new model is shown below.</p>
-<p><img src="koh.png" alt="image"></p>
-<p>In <a href="[http:/opengrok.libreoffice.org/xref/core/sc/inc/column.hxx#130">http://opengrok.libreoffice.org/xref/core/sc/inc/column.hxx#130</a> you can see that <code>maBroadcasters</code> have been declared as the type <code>BroadcasterStoreType</code>.</p>
-<p>BroadcasterStoreType has been declared as:</p>
-<p><code>typedef mdds::multi_type_vector&lt;BCBlkFunc&gt; BroadcasterStoreType;</code></p>
-<p>where BCBlkFunc has been declared as:</p>
-<p><code>typedef mdds::mtv::custom_block_func1&lt;sc::broadcaster_block&gt; BCBlkFunc;</code></p>
-<p>MDDS (multi dimensional data structure) provides the data structures used by calc.The latest mdds source code can be downloaded from <a href="https://code.google.com/p/multidimalgorithm/wiki/Downloads" target="_blank">here</a></p>
+                        <h1 id="this-part-has-some-q-a-so-that-readers-understand-some-basics">This part has some Q&amp;A so that readers understand some basics.</h1>
+<ol>
+<li><p>Can there be multple soffice processes per user per host ?</p>
+<p> Answer : There can only be one soffice process per user per host, if one soffice process is running and you try to open a document with another soffice command via terminal, this request will be transfered to the already running soffice process and the document will be opened in a new window of the same process. However while an instance of soffice gui instance any number of <code>headless</code> soffice commands can be run. This is probably because the headless processes need only readonly access to source files and cfg.</p>
+</li>
+<li><p>Can there be extensions installed just for a particular document or can there be any correspondence between extensions and the documents open by soffice ?</p>
+<p>Answer : An installed extension is common to all documents opened by soffice, there is no concept of per document extension. The extension should be prepared to handle the presence of multiple documents/ or calls from them.</p>
+</li>
+<li><p>Is there any easy method to see the states of calc process while running without using gdb ?</p>
+<p>Answer : As far as we know there is no such way other than using gdb.</p>
+</li>
+</ol>
 
                     
                     </section>
@@ -544,10 +530,10 @@ The new model is shown below.</p>
         </div>
 
         
-        <a href="../calcarch/index.html" class="navigation navigation-prev " aria-label="Previous page: Calc architecture"><i class="fa fa-angle-left"></i></a>
+        <a href="../extensions/index.html" class="navigation navigation-prev " aria-label="Previous page: LibreOffice extensions"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../calcarch/core.html" class="navigation navigation-next " aria-label="Next page: core"><i class="fa fa-angle-right"></i></a>
+        <a href="../extensions/part1.html" class="navigation navigation-next " aria-label="Next page: Part1"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
