@@ -1,0 +1,952 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
+        <title>Part6 ProtocolHandler extension | Libreoffice Blog</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.0.2">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+        
+    
+    
+    
+    <link rel="prev" href="../extensions/part5.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <link rel="stylesheet" href="../gitbook/style.css">
+    
+    
+
+        
+    <div class="book" data-level="4.7" data-basepath=".." data-revision="Wed Oct 26 2016 11:52:07 GMT+0530 (IST)">
+    
+
+<div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Type to search" class="form-control" />
+    </div>
+    <ul class="summary">
+        
+        
+        
+        
+
+        
+
+        
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="../index.html">
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="patches/index.html">
+            
+                
+                    <a href="../patches/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        patches
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1" data-path="patches/rsu.html">
+            
+                
+                    <a href="../patches/rsu.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.1.</b>
+                        
+                        Red squiggly underline bug
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="calcarch/index.html">
+            
+                
+                    <a href="../calcarch/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Calc architecture
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="calcarch/overview.html">
+            
+                
+                    <a href="../calcarch/overview.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        overview
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="calcarch/core.html">
+            
+                
+                    <a href="../calcarch/core.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        core
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="calcarch/ui.html">
+            
+                
+                    <a href="../calcarch/ui.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        ui
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="calcarch/filter.html">
+            
+                
+                    <a href="../calcarch/filter.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        filter
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="misc/index.html">
+            
+                
+                    <a href="../misc/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Libreoffice misc
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.1" data-path="misc/devsetup.html">
+            
+                
+                    <a href="../misc/devsetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        devsetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+            
+                
+                    <a href="../misc/sdksetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        sdksetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="misc/devserver.html">
+            
+                
+                    <a href="../misc/devserver.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.3.</b>
+                        
+                        devserver
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="misc/bibisect.html">
+            
+                
+                    <a href="../misc/bibisect.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.4.</b>
+                        
+                        bibisect
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
+            
+                
+                    <a href="../misc/mdds.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.5.</b>
+                        
+                        mdds
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="misc/namespaces.html">
+            
+                
+                    <a href="../misc/namespaces.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.6.</b>
+                        
+                        namespaces
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="misc/patchchecklist.html">
+            
+                
+                    <a href="../misc/patchchecklist.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.7.</b>
+                        
+                        patchchecklist
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="extensions/index.html">
+            
+                
+                    <a href="../extensions/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        LibreOffice extensions
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="extensions/prefaq.html">
+            
+                
+                    <a href="../extensions/prefaq.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        PreFAQ
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="extensions/part1.html">
+            
+                
+                    <a href="../extensions/part1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.</b>
+                        
+                        Part1 UNO Intro
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="extensions/part2.html">
+            
+                
+                    <a href="../extensions/part2.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.3.</b>
+                        
+                        Part2 Remote Calc
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="extensions/part3.html">
+            
+                
+                    <a href="../extensions/part3.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.4.</b>
+                        
+                        Part3 UNO communication
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="extensions/part4.html">
+            
+                
+                    <a href="../extensions/part4.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.5.</b>
+                        
+                        Part4 Simple component
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="extensions/part5.html">
+            
+                
+                    <a href="../extensions/part5.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.6.</b>
+                        
+                        Part5 Addon
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.7" data-path="extensions/part6.html">
+            
+                
+                    <a href="../extensions/part6.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.7.</b>
+                        
+                        Part6 ProtocolHandler extension
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+        
+        <li class="divider"></li>
+        <li>
+            <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                Published with GitBook
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header">
+    <!-- Actions Left -->
+    <a href="#" class="btn pull-left toggle-summary" aria-label="Table of Contents"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search" aria-label="Search"><i class="fa fa-search"></i></a>
+    
+    <div id="font-settings-wrapper" class="dropdown pull-left">
+        <a href="#" class="btn toggle-dropdown" aria-label="Font Settings"><i class="fa fa-font"></i>
+        </a>
+        <div class="dropdown-menu font-settings">
+    <div class="dropdown-caret">
+        <span class="caret-outer"></span>
+        <span class="caret-inner"></span>
+    </div>
+
+    <div class="buttons">
+        <button type="button" id="reduce-font-size" class="button size-2">A</button>
+        <button type="button" id="enlarge-font-size" class="button size-2">A</button>
+    </div>
+
+    <div class="buttons font-family-list">
+        <button type="button" data-font="0" class="button">Serif</button>
+        <button type="button" data-font="1" class="button">Sans</button>
+    </div>
+
+    <div class="buttons color-theme-list">
+        <button type="button" id="color-theme-preview-0" class="button size-3" data-theme="0">White</button>
+        <button type="button" id="color-theme-preview-1" class="button size-3" data-theme="1">Sepia</button>
+        <button type="button" id="color-theme-preview-2" class="button size-3" data-theme="2">Night</button>
+    </div>
+</div>
+
+    </div>
+
+    <!-- Actions Right -->
+    
+    <div class="dropdown pull-right">
+        <a href="#" class="btn toggle-dropdown" aria-label="Share"><i class="fa fa-share-alt"></i>
+        </a>
+        <div class="dropdown-menu font-settings dropdown-left">
+            <div class="dropdown-caret">
+                <span class="caret-outer"></span>
+                <span class="caret-inner"></span>
+            </div>
+            <div class="buttons">
+                <button type="button" data-sharing="twitter" class="button">
+                    Share on Twitter
+                </button>
+                <button type="button" data-sharing="google-plus" class="button">
+                    Share on Google
+                </button>
+                <button type="button" data-sharing="facebook" class="button">
+                    Share on Facebook
+                </button>
+                <button type="button" data-sharing="weibo" class="button">
+                    Share on Weibo
+                </button>
+                <button type="button" data-sharing="instapaper" class="button">
+                    Share on Instapaper
+                </button>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <a href="#" target="_blank" class="btn pull-right google-plus-sharing-link sharing-link" data-sharing="google-plus" aria-label="Google"><i class="fa fa-google-plus"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right facebook-sharing-link sharing-link" data-sharing="facebook" aria-label="Facebook"><i class="fa fa-facebook"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right twitter-sharing-link sharing-link" data-sharing="twitter" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
+    
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../" >Libreoffice Blog</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="libreoffice-extension-development-with-c-part-6-protocolhandler-component">Libreoffice extension development with C++ - Part 6 - ProtocolHandler Component.</h1>
+<h3 id="audience-selection">Audience selection</h3>
+<ol>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can jump directly to <strong><a href="#prebuilt">Test the prebuilt extension</a></strong></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <strong><a href="#buildsec">Download, build and test the extension</a></strong></li>
+</ol>
+<hr>
+<p>In <a href="part5.html">Part5</a> we saw how to add menu and toolbar entries in Calc. In this part we see how the command URLs emitted by these new toolbar buttons and menu entries can be handled according to our needs. On clicking the &quot;Insert Date&quot;/&quot;Insert Time&quot; button/menu, we insert current date/time to cell A1.</p>
+<p>One way to make our component handle any commandURL, is to implement <code>com.sun.star.frame.ProtocolHandler</code> service. <code>ProtocolHandler</code> service supports the interface <code>com.sun.star.frame.XDispatchProvider</code> mandatorily and optionally support the interface <code>com.sun.star.lang.XInitialization</code>.</p>
+<p><img src="https://wiki.openoffice.org/w/images/thumb/a/a0/ProtocolHandler.png/800px-ProtocolHandler.png" alt="ProtocolHandler service"></p>
+<p>The interface <code>XDispatchProvider</code> supports two methods :</p>
+<pre><code>XDispatch queryDispatch( [in] ::com::sun::star::util::URL URL, 
+                         [in] string TargetFrameName,
+                         [in] long SearchFlags )
+
+sequence&lt; XDispatch &gt; queryDispatches( [in] sequence&lt; DispatchDescriptor &gt; Requests )
+</code></pre><p>Our component implementing <code>ProtocolHandler</code> service will be asked for its agreement to execute a given URL by a call to interface methods <code>queryDispatch()</code>. It has to parse and validate the incoming URL. If the URL is valid and the protocol handler is able to handle it, it should return a dispatch object, thus indicating that it accepts the request.
+The returned object must implement the interface <code>com.sun.star.frame.XDispatch</code> which has the following methods :</p>
+<pre><code>void dispatch(
+     [in] com::sun::star::util::URL URL,
+     [in] sequence&lt;com::sun::star::beans::PropertyValue&gt; Arguments);
+
+void addStatusListener(
+     [in] XStatusListener Control,
+     [in] com::sun::star::util::URL URL);
+
+void removeStatusListener(
+     [in] XStatusListener Control,
+     [in] com::sun::star::util::URL URL);
+</code></pre><p>If our ProtocolHandler component supports <code>XInitialization</code> interface, its method <code>void initialize([in] sequence&lt; any &gt; aArguments)</code> will be passed with a <code>com.sun.star.frame.Frame</code> object. This <code>Frame</code> object implements <code>com.sun.star.frame.XFrame</code> interface which gives us access to the controller from which we can access the document model where we can manipulate the document.</p>
+<p>Following diagram shows how to get the controller and document model from XFrame interface.</p>
+<p><img src="https://wiki.openoffice.org/w/images/thumb/d/d1/FCMNavigation.png/800px-FCMNavigation.png" alt="Frame-controller-model organization"></p>
+<p>Note that our ProtocolHandler Component will be instantiated when LO starts for every UI element whose URL we support.</p>
+<p>Lets start with declaring our ProtocolHandler component implementation class <code>Addon</code> in <code>addon.hxx</code></p>
+<pre><code class="lang-cpp">
+<span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> IMPLEMENTATION_NAME &quot;inco.niocs.test.protocolhandler&quot;</span>
+
+<span class="hljs-keyword">class</span> Addon : <span class="hljs-keyword">public</span> cppu::WeakImplHelper3
+&lt;
+    com::sun::star::frame::XDispatchProvider,
+    com::sun::star::lang::XInitialization,
+    com::sun::star::lang::XServiceInfo
+&gt;
+{
+<span class="hljs-keyword">private</span>:
+    ::com::sun::star::uno::Reference&lt; ::com::sun::star::uno::XComponentContext &gt; mxContext;
+    ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XFrame &gt; mxFrame;
+
+<span class="hljs-keyword">public</span>:
+    Addon( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::uno::XComponentContext &gt; &amp;rxContext)
+        : mxContext( rxContext )
+    {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Created Addon object : %p\n&quot;</span>, <span class="hljs-keyword">this</span>); fflush(stdout);
+    }
+
+    <span class="hljs-comment">// XDispatchProvider</span>
+    <span class="hljs-keyword">virtual</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XDispatch &gt;
+            <span class="hljs-function">SAL_CALL <span class="hljs-title">queryDispatch</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::util::URL&amp; aURL,
+                <span class="hljs-keyword">const</span> ::rtl::OUString&amp; sTargetFrameName, sal_Int32 nSearchFlags )</span>
+                <span class="hljs-title">throw</span><span class="hljs-params">( ::com::sun::star::uno::RuntimeException )</span></span>;
+    <span class="hljs-keyword">virtual</span> ::com::sun::star::uno::Sequence &lt; ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XDispatch &gt; &gt;
+        <span class="hljs-function">SAL_CALL <span class="hljs-title">queryDispatches</span><span class="hljs-params">(
+            <span class="hljs-keyword">const</span> ::com::sun::star::uno::Sequence &lt; ::com::sun::star::frame::DispatchDescriptor &gt;&amp; seqDescriptor )</span>
+            <span class="hljs-title">throw</span><span class="hljs-params">( ::com::sun::star::uno::RuntimeException )</span></span>;
+
+    <span class="hljs-comment">// XInitialization</span>
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> SAL_CALL <span class="hljs-title">initialize</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Sequence&lt; ::com::sun::star::uno::Any &gt;&amp; aArguments )</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(::com::sun::star::uno::Exception, ::com::sun::star::uno::RuntimeException)</span></span>;
+
+    <span class="hljs-comment">// XServiceInfo</span>
+    <span class="hljs-keyword">virtual</span> ::rtl::<span class="hljs-function">OUString SAL_CALL <span class="hljs-title">getImplementationName</span><span class="hljs-params">()</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(::com::sun::star::uno::RuntimeException)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> sal_Bool SAL_CALL <span class="hljs-title">supportsService</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::rtl::OUString&amp; ServiceName )</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(::com::sun::star::uno::RuntimeException)</span></span>;
+    <span class="hljs-keyword">virtual</span> ::com::sun::star::uno::Sequence&lt; ::rtl::OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">getSupportedServiceNames</span><span class="hljs-params">()</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(::com::sun::star::uno::RuntimeException)</span></span>;
+};
+
+<span class="hljs-comment">// Standard service operations functions needed for every component</span>
+::rtl::<span class="hljs-function">OUString <span class="hljs-title">Addon_getImplementationName</span><span class="hljs-params">()</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">( ::com::sun::star::uno::RuntimeException )</span></span>;
+
+<span class="hljs-function">sal_Bool SAL_CALL <span class="hljs-title">Addon_supportsService</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::rtl::OUString&amp; ServiceName )</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">( ::com::sun::star::uno::RuntimeException )</span></span>;
+
+::com::sun::star::uno::Sequence&lt; ::rtl::OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">Addon_getSupportedServiceNames</span><span class="hljs-params">()</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">( ::com::sun::star::uno::RuntimeException )</span></span>;
+
+::com::sun::star::uno::Reference&lt; ::com::sun::star::uno::XInterface &gt;
+<span class="hljs-function">SAL_CALL <span class="hljs-title">Addon_createInstance</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::uno::XComponentContext &gt; &amp; rContext)</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">( ::com::sun::star::uno::Exception )</span></span>;
+</code></pre>
+<p>Next we define the <code>XDispatch</code> implementing class <code>DateTimeWriterDispatchImpl</code> in <code>addon.hxx</code>.</p>
+<pre><code class="lang-cpp"><span class="hljs-keyword">class</span> DateTimeWriterDispatchImpl : <span class="hljs-keyword">public</span> cppu::WeakImplHelper1&lt;com::sun::star::frame::XDispatch&gt;
+{
+<span class="hljs-keyword">private</span>:
+    ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XFrame &gt; mxFrame;
+<span class="hljs-keyword">public</span>:
+    DateTimeWriterDispatchImpl( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XFrame &gt; &amp;rxFrame )
+    : mxFrame( rxFrame )
+    {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Created DateTimeWriterDispatchImpl object : %p\n&quot;</span>, <span class="hljs-keyword">this</span>); fflush(stdout);
+    }
+
+    <span class="hljs-comment">// XDispatch</span>
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> SAL_CALL <span class="hljs-title">dispatch</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::util::URL&amp; aURL,
+        <span class="hljs-keyword">const</span> ::com::sun::star::uno::Sequence&lt; ::com::sun::star::beans::PropertyValue &gt;&amp; lArgs )</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(::com::sun::star::uno::RuntimeException)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> SAL_CALL <span class="hljs-title">addStatusListener</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XStatusListener &gt;&amp; xControl,
+        <span class="hljs-keyword">const</span> ::com::sun::star::util::URL&amp; aURL )</span> <span class="hljs-title">throw</span> <span class="hljs-params">(::com::sun::star::uno::RuntimeException)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> SAL_CALL <span class="hljs-title">removeStatusListener</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XStatusListener &gt;&amp; xControl,
+        <span class="hljs-keyword">const</span> ::com::sun::star::util::URL&amp; aURL )</span> <span class="hljs-title">throw</span> <span class="hljs-params">(::com::sun::star::uno::RuntimeException)</span></span>;
+};
+</code></pre>
+<p>We can now implement the <code>Addon</code> class methods in <code>addons.cxx</code></p>
+<pre><code class="lang-cpp">
+<span class="hljs-comment">// This is the service name an Add-On has to implement</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> SERVICE_NAME &quot;com.sun.star.frame.ProtocolHandler&quot;</span>
+
+<span class="hljs-comment">// ProtocolHandler implementation &quot;Addon&quot; class methods</span>
+
+<span class="hljs-keyword">void</span> SAL_CALL Addon::initialize( <span class="hljs-keyword">const</span> Sequence&lt; Any &gt;&amp; aArguments ) <span class="hljs-keyword">throw</span> ( Exception, RuntimeException)
+{
+    Reference &lt; XFrame &gt; xFrame;
+    <span class="hljs-keyword">if</span> ( aArguments.getLength() )
+    {
+        aArguments[<span class="hljs-number">0</span>] &gt;&gt;= xFrame;
+        mxFrame = xFrame;
+    }
+}
+
+Reference&lt; XDispatch &gt; SAL_CALL Addon::queryDispatch( <span class="hljs-keyword">const</span> URL&amp; aURL, <span class="hljs-keyword">const</span> ::rtl::OUString&amp; sTargetFrameName, sal_Int32 nSearchFlags )
+                <span class="hljs-keyword">throw</span>( RuntimeException )
+{
+    Reference &lt; XDispatch &gt; xRet;
+    <span class="hljs-keyword">if</span> ( aURL.Protocol.equalsAscii(<span class="hljs-string">&quot;inco.niocs.test.protocolhandler:&quot;</span>) )
+    {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Addon::queryDispatch() called. this = %p, command = %s\n&quot;</span>, <span class="hljs-keyword">this</span>,
+        OUStringToOString( aURL.Path, RTL_TEXTENCODING_ASCII_US ).getStr()); fflush(stdout);
+        <span class="hljs-keyword">if</span> ( aURL.Path.equalsAscii( <span class="hljs-string">&quot;InsertDate&quot;</span> ) )
+            xRet = <span class="hljs-keyword">new</span> DateTimeWriterDispatchImpl( mxFrame );
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( aURL.Path.equalsAscii( &quot;InsertTime&quot; )</span> )
+            xRet </span>= xRet = <span class="hljs-keyword">new</span> DateTimeWriterDispatchImpl( mxFrame );
+    }
+
+    <span class="hljs-keyword">return</span> xRet;
+}
+
+<span class="hljs-comment">// This is a method which can query multiple URLs at once.</span>
+Sequence &lt; Reference&lt; XDispatch &gt; &gt; SAL_CALL Addon::queryDispatches( <span class="hljs-keyword">const</span> Sequence &lt; DispatchDescriptor &gt;&amp; seqDescripts )
+            <span class="hljs-keyword">throw</span>( RuntimeException )
+{
+    sal_Int32 nCount = seqDescripts.getLength();
+    Sequence &lt; Reference &lt; XDispatch &gt; &gt; lDispatcher( nCount );
+
+    <span class="hljs-keyword">for</span>( sal_Int32 i=<span class="hljs-number">0</span>; i&lt;nCount; ++i )
+        lDispatcher[i] = queryDispatch( seqDescripts[i].FeatureURL, seqDescripts[i].FrameName, seqDescripts[i].SearchFlags );
+
+    <span class="hljs-keyword">return</span> lDispatcher;
+}
+
+
+<span class="hljs-comment">// Helper functions for the implementation of UNO component interfaces.</span>
+<span class="hljs-function">OUString <span class="hljs-title">Addon_getImplementationName</span><span class="hljs-params">()</span>
+<span class="hljs-title">throw</span> <span class="hljs-params">(RuntimeException)</span>
+</span>{
+    <span class="hljs-keyword">return</span> OUString ( IMPLEMENTATION_NAME );
+}
+
+Sequence&lt; ::rtl::OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">Addon_getSupportedServiceNames</span><span class="hljs-params">()</span>
+<span class="hljs-title">throw</span> <span class="hljs-params">(RuntimeException)</span>
+</span>{
+    Sequence &lt; ::rtl::OUString &gt; aRet(<span class="hljs-number">1</span>);
+    ::rtl::OUString* pArray = aRet.getArray();
+    pArray[<span class="hljs-number">0</span>] =  OUString ( SERVICE_NAME );
+    <span class="hljs-keyword">return</span> aRet;
+}
+
+Reference&lt; XInterface &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">Addon_createInstance</span><span class="hljs-params">( <span class="hljs-keyword">const</span> Reference&lt; XComponentContext &gt; &amp; rContext)</span>
+    <span class="hljs-title">throw</span><span class="hljs-params">( Exception )</span>
+</span>{
+    <span class="hljs-keyword">return</span> (cppu::OWeakObject*) <span class="hljs-keyword">new</span> Addon( rContext );
+}
+
+<span class="hljs-comment">// Implementation of the recommended/mandatory interfaces of a UNO component.</span>
+<span class="hljs-comment">// XServiceInfo</span>
+::rtl::OUString SAL_CALL Addon::getImplementationName()
+    <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+    <span class="hljs-keyword">return</span> Addon_getImplementationName();
+}
+
+sal_Bool SAL_CALL Addon::supportsService( <span class="hljs-keyword">const</span> ::rtl::OUString&amp; rServiceName )
+    <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+    <span class="hljs-keyword">return</span> cppu::supportsService(<span class="hljs-keyword">this</span>, rServiceName);
+}
+
+Sequence&lt; ::rtl::OUString &gt; SAL_CALL Addon::getSupportedServiceNames(  )
+    <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+    <span class="hljs-keyword">return</span> Addon_getSupportedServiceNames();
+}
+</code></pre>
+<p>Now we need to implement the <code>XDispatch</code> implementing class <code>DateTimeWriterDispatchImpl</code> in <code>addon.cxx</code> with helper functions to write date/time to cell A1</p>
+<pre><code class="lang-cpp"><span class="hljs-comment">// XDispatch implementer class &quot;DateTimeWriterDispatchImpl&quot; methods</span>
+
+<span class="hljs-keyword">void</span> SAL_CALL DateTimeWriterDispatchImpl::dispatch( <span class="hljs-keyword">const</span> URL&amp; aURL, <span class="hljs-keyword">const</span> Sequence &lt; PropertyValue &gt;&amp; lArgs ) <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+    <span class="hljs-keyword">if</span> ( aURL.Protocol.equalsAscii(<span class="hljs-string">&quot;inco.niocs.test.protocolhandler:&quot;</span>) )
+    {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; DateTimeWriterDispatchImpl::dispatch() called. this = %p, command = %s\n&quot;</span>, <span class="hljs-keyword">this</span>,
+        OUStringToOString( aURL.Path, RTL_TEXTENCODING_ASCII_US ).getStr()); fflush(stdout);
+        <span class="hljs-keyword">if</span> ( aURL.Path.equalsAscii( <span class="hljs-string">&quot;InsertDate&quot;</span> ) )
+        {
+            WriteCurrDate( mxFrame );
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( aURL.Path.equalsAscii( &quot;InsertTime&quot; )</span> )
+        </span>{
+        WriteCurrTime( mxFrame );
+        }
+    }
+}
+
+<span class="hljs-keyword">void</span> SAL_CALL DateTimeWriterDispatchImpl::addStatusListener( <span class="hljs-keyword">const</span> Reference&lt; XStatusListener &gt;&amp; xControl, <span class="hljs-keyword">const</span> URL&amp; aURL ) <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+}
+
+<span class="hljs-keyword">void</span> SAL_CALL DateTimeWriterDispatchImpl::removeStatusListener( <span class="hljs-keyword">const</span> Reference&lt; XStatusListener &gt;&amp; xControl, <span class="hljs-keyword">const</span> URL&amp; aURL ) <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+}
+
+
+<span class="hljs-comment">// Helper functions to write current date/time to sheet</span>
+
+<span class="hljs-comment">// Local function to write a string to cell A1</span>
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">WriteStringToCell</span><span class="hljs-params">( Reference&lt; XFrame &gt; &amp;rxFrame, OUString aStr )</span>
+</span>{
+    <span class="hljs-keyword">if</span> ( !rxFrame.is() )
+    <span class="hljs-keyword">return</span>;
+
+    Reference&lt; XController &gt; xCtrl = rxFrame-&gt;getController();
+    <span class="hljs-keyword">if</span> ( !xCtrl.is() )
+    <span class="hljs-keyword">return</span>;
+
+    Reference&lt; XModel &gt; xModel = xCtrl-&gt;getModel();
+    <span class="hljs-keyword">if</span> ( !xModel.is() )
+    <span class="hljs-keyword">return</span>;
+
+    Reference&lt; XSpreadsheetDocument &gt; xSpreadsheetDocument( xModel, UNO_QUERY );
+    <span class="hljs-keyword">if</span> ( !xSpreadsheetDocument.is() )
+    <span class="hljs-keyword">return</span>;
+
+    Reference&lt; XSpreadsheets &gt; xSpreadsheets = xSpreadsheetDocument-&gt;getSheets();
+    <span class="hljs-keyword">if</span> ( !xSpreadsheets-&gt;hasByName(<span class="hljs-string">&quot;Sheet1&quot;</span>) )
+    <span class="hljs-keyword">return</span>;
+
+    Any aSheet = xSpreadsheets-&gt;getByName(<span class="hljs-string">&quot;Sheet1&quot;</span>);
+
+    Reference&lt; XSpreadsheet &gt; xSpreadsheet( aSheet, UNO_QUERY );
+
+    Reference&lt; XCell &gt; xCell = xSpreadsheet-&gt;getCellByPosition(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+
+    xCell-&gt;setFormula(aStr);
+
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Wrote \&quot;%s\&quot; to Cell A1\n&quot;</span>,
+    OUStringToOString( aStr, RTL_TEXTENCODING_ASCII_US ).getStr()); fflush(stdout);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">GetCurrDateTime</span><span class="hljs-params">( oslDateTime* pDateTime )</span>
+</span>{
+    <span class="hljs-keyword">if</span> ( !pDateTime )
+    <span class="hljs-keyword">return</span>;
+    TimeValue aTimeval;
+    osl_getSystemTime( &amp;aTimeval );
+    osl_getDateTimeFromTimeValue( &amp;aTimeval, pDateTime );
+}
+
+<span class="hljs-comment">// Local function to write Date to cell A1</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">WriteCurrDate</span><span class="hljs-params">( Reference&lt; XFrame &gt; &amp;rxFrame )</span>
+</span>{
+    <span class="hljs-keyword">char</span> buf[<span class="hljs-number">12</span>];
+    oslDateTime aDateTime;
+    GetCurrDateTime( &amp;aDateTime );
+    <span class="hljs-built_in">sprintf</span>(buf, <span class="hljs-string">&quot;%04d/%02d/%02d&quot;</span>, aDateTime.Year, aDateTime.Month, aDateTime.Day);
+    WriteStringToCell( rxFrame, OUString::createFromAscii(buf) );
+}
+
+<span class="hljs-comment">// Local function to write Time to cell A1</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">WriteCurrTime</span><span class="hljs-params">( Reference&lt; XFrame &gt; &amp;rxFrame )</span>
+</span>{
+    <span class="hljs-keyword">char</span> buf[<span class="hljs-number">10</span>];
+    oslDateTime aDateTime;
+    GetCurrDateTime( &amp;aDateTime );
+    <span class="hljs-built_in">sprintf</span>(buf, <span class="hljs-string">&quot;%02d%02d%02d&quot;</span>, aDateTime.Hours, aDateTime.Minutes, aDateTime.Seconds);
+    WriteStringToCell( rxFrame, OUString::createFromAscii(buf) );
+}
+</code></pre>
+<p>The final step is to write component operation function to register our component in <code>component.cxx</code>. Since we have only one component to register, we use a different approach than in <a href="part4.html">Part4</a>.</p>
+<pre><code class="lang-cpp"><span class="hljs-comment">/**
+ * This function is called to get service factories for an implementation.
+ *
+ * @param pImplName       name of implementation
+ * @param pServiceManager a service manager, need for component creation
+ * @param pRegistryKey    the registry key for this component, need for persistent data
+ * @return a component factory
+ */</span>
+<span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> SAL_DLLPUBLIC_EXPORT <span class="hljs-keyword">void</span> * <span class="hljs-function">SAL_CALL <span class="hljs-title">component_getFactory</span><span class="hljs-params">(<span class="hljs-keyword">const</span> sal_Char * pImplName, <span class="hljs-keyword">void</span> * <span class="hljs-comment">/*pServiceManager*/</span>, <span class="hljs-keyword">void</span> * pRegistryKey)</span>
+</span>{
+    <span class="hljs-keyword">void</span> * pRet = <span class="hljs-number">0</span>;
+
+    <span class="hljs-keyword">if</span> (rtl_str_compare( pImplName, IMPLEMENTATION_NAME ) == <span class="hljs-number">0</span>)
+    {
+        Reference&lt; XSingleComponentFactory &gt; xFactory( createSingleComponentFactory(
+            Addon_createInstance,
+            OUString( IMPLEMENTATION_NAME ),
+            Addon_getSupportedServiceNames() ) );
+
+        <span class="hljs-keyword">if</span> (xFactory.is())
+        {
+            xFactory-&gt;acquire();
+            pRet = xFactory.get();
+        }
+    }
+
+    <span class="hljs-keyword">return</span> pRet;
+}
+
+<span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> <span class="hljs-function">SAL_DLLPUBLIC_EXPORT <span class="hljs-keyword">void</span> SAL_CALL
+    <span class="hljs-title">component_getImplementationEnvironment</span><span class="hljs-params">(
+        <span class="hljs-keyword">char</span> <span class="hljs-keyword">const</span> ** ppEnvTypeName, uno_Environment **)</span>
+</span>{
+    *ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME;
+}
+</code></pre>
+<hr>
+<h2 id="-a-name-buildsec-a-download-build-and-test-the-extension"><a name="buildsec"></a>Download, build and test the extension</h2>
+<p><strong>Please remember to remove any previous extensions from Part5 using <code>$LOROOT/instdir/program/unopkg remove</code></strong></p>
+<p>The whole project can be downloaded and built be doing :</p>
+<pre><code>$ git clone https://github.com/niocs/ProtocolHandlerExtension.git
+$ cd ProtocolHandlerExtension
+$ make
+$ $LOROOT/instdir/program/unopkg add /home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/ProtocolHandlerExtension.oxt
+</code></pre><p>To remove the extension, do :</p>
+<pre><code>$ $LOROOT/instdir/program/unopkg remove ProtocolHandlerExtension.oxt
+</code></pre><p>On opening Calc you should notice the top level menu called <code>Add-On example</code> with menu entries <code>Insert Date</code> and <code>Insert Time</code>. Add some text to any cell and try clicking on the new menu items and see if the text gets bold/italicized. The two new toolbar icons <img src="date.png" alt="date icon"> and <img src="time.png" alt="time icon"> also should be visible. On clicking <code>Insert Date</code>/<code>Insert Time</code>, the current date/time(UTC)  will be inserted to cell A1. You should also see the debug statements printed in the terminal as below when LO starts and you click the newly added UI elements.</p>
+<pre><code>## Just after Calc Loads.
+
+DEBUG&gt;&gt;&gt; Created Addon object : 0x2bfebd0
+DEBUG&gt;&gt;&gt; Addon::queryDispatch() called. this = 0x2bfebd0, command = InsertDate
+DEBUG&gt;&gt;&gt; Created DateTimeWriterDispatchImpl object : 0x2bfdeb0
+DEBUG&gt;&gt;&gt; Created Addon object : 0x2bff5d0
+DEBUG&gt;&gt;&gt; Addon::queryDispatch() called. this = 0x2bff5d0, command = InsertTime
+DEBUG&gt;&gt;&gt; Created DateTimeWriterDispatchImpl object : 0x2bff6e0
+
+DEBUG&gt;&gt;&gt; Created Addon object : 0x2ff5740
+DEBUG&gt;&gt;&gt; Addon::queryDispatch() called. this = 0x2ff5740, command = InsertDate
+DEBUG&gt;&gt;&gt; Created DateTimeWriterDispatchImpl object : 0x2ffbb50
+DEBUG&gt;&gt;&gt; Created Addon object : 0x2ff5860
+DEBUG&gt;&gt;&gt; Addon::queryDispatch() called. this = 0x2ff5860, command = InsertTime
+DEBUG&gt;&gt;&gt; Created DateTimeWriterDispatchImpl object : 0x2ff59a0
+
+### After you click the UI elements : 
+
+DEBUG&gt;&gt;&gt; DateTimeWriterDispatchImpl::dispatch() called. this = 0x2ffbb50, command = InsertDate
+DEBUG&gt;&gt;&gt; Wrote &quot;2016/10/26&quot; to Cell A1
+DEBUG&gt;&gt;&gt; DateTimeWriterDispatchImpl::dispatch() called. this = 0x2ff59a0, command = InsertTime
+DEBUG&gt;&gt;&gt; Wrote &quot;053312&quot; to Cell A1
+DEBUG&gt;&gt;&gt; DateTimeWriterDispatchImpl::dispatch() called. this = 0x2bfdeb0, command = InsertDate
+DEBUG&gt;&gt;&gt; Wrote &quot;2016/10/26&quot; to Cell A1
+DEBUG&gt;&gt;&gt; DateTimeWriterDispatchImpl::dispatch() called. this = 0x2bff6e0, command = InsertTime
+DEBUG&gt;&gt;&gt; Wrote &quot;053316&quot; to Cell A1
+</code></pre><hr>
+<h2 id="-a-name-prebuilt-a-test-the-prebuilt-extension"><a name="prebuilt"></a>Test the prebuilt extension</h2>
+<p><strong>Please remember to remove any previous extension from Part5 using <code>unopkg remove</code>.</strong></p>
+<p>Download the extension as :</p>
+<pre><code>$ git clone https://github.com/niocs/ProtocolHandlerExtension.git
+$ cd ProtocolHandlerExtension
+</code></pre><p>In <code>ProtocolHandlerExtension</code> directory you will see a file called <code>ProtocolHandlerExtension.oxt</code>. This is the prebuilt extension. Install this extension using</p>
+<pre><code>$ unopkg add /path/to/ProtocolHandlerExtension.oxt
+</code></pre><p>To remove this extension do :</p>
+<pre><code>$ unopkg remove ProtocolHandlerExtension.oxt
+</code></pre><p>On opening calc you should see the top level menu called <code>Add-On example</code> with menu entries <code>Insert Date</code> and <code>Insert Time</code>. The two new toolbar icons <img src="date.png" alt="date icon"> and <img src="time.png" alt="time icon"> also should be visible. On clicking <code>Insert Date</code>/<code>Insert Time</code>, the current date/time(UTC) will be inserted to cell A1.</p>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="../extensions/part5.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Part5 Addon"><i class="fa fa-angle-left"></i></a>
+        
+        
+    </div>
+</div>
+
+        
+<script src="../gitbook/app.js"></script>
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"fontSettings":{"theme":null,"family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

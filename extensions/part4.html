@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Part4 | Libreoffice Blog</title>
+        <title>Part4 Simple component | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.5" data-basepath=".." data-revision="Thu Oct 20 2016 19:01:46 GMT+0530 (IST)">
+    <div class="book" data-level="4.5" data-basepath=".." data-revision="Wed Oct 26 2016 11:52:07 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -348,7 +348,7 @@
                         
                             <b>4.2.</b>
                         
-                        Part1
+                        Part1 UNO Intro
                     </a>
                 
             
@@ -363,7 +363,7 @@
                         
                             <b>4.3.</b>
                         
-                        Part2
+                        Part2 Remote Calc
                     </a>
                 
             
@@ -378,7 +378,7 @@
                         
                             <b>4.4.</b>
                         
-                        Part3
+                        Part3 UNO communication
                     </a>
                 
             
@@ -393,7 +393,7 @@
                         
                             <b>4.5.</b>
                         
-                        Part4
+                        Part4 Simple component
                     </a>
                 
             
@@ -408,7 +408,22 @@
                         
                             <b>4.6.</b>
                         
-                        Part5
+                        Part5 Addon
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="extensions/part6.html">
+            
+                
+                    <a href="../extensions/part6.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.7.</b>
+                        
+                        Part6 ProtocolHandler extension
                     </a>
                 
             
@@ -861,7 +876,6 @@ Reference&lt; XInterface &gt; <span class="hljs-function">SAL_CALL <span class="
 }
 </code></pre>
 <hr>
-<p>_</p>
 <h2 id="-a-name-buildsec-a-download-build-and-test-the-extension"><a name="buildsec"></a>Download, build and test the extension</h2>
 <h3 id="steps-5-and-6">Steps 5 and 6</h3>
 <p>In this section we use UNO SDK tools to create C++ header files from .idl files (ours and the dependent LO buildin .idl files) and build the component &quot;SimpleComponent&quot; from service implementation cxx files with the hdl files generated and package it into an extension file named as &quot;SimpleComponent.oxt&quot;. Doing these operations manually is tedious hence we have a Makefile reused from the LO SDK&apos;s sample extensions.</p>
@@ -876,8 +890,8 @@ You can also see the generated include files from idl files in <code>/home/denni
 There are two ways to do this : one via the extension manager and other via <code>unopkg</code> commandline tool. Do only one of the following substeps :</p>
 <ul>
 <li>Extension-Manager method : Open Calc and and go to Tools &gt; Extension Manager &gt; Click add button, browse and select <code>SimpleComponent.oxt</code> and click on &quot;Only for me&quot; button for the dialog &quot;For whom do you want to install the extension ?&quot;. You may need to restart Calc to take effect.</li>
-<li>CommandLine method : just run the below command in terminal as normal user.<pre><code>$ unopkg add &lt;/path/to/&gt;SimpleComponent.oxt
-</code></pre>You can remove an extension with its name (without path) via unopkg, for example to remove SimpleComponent.oxt  :<pre><code>$ unopkg remove SimpleComponent.oxt
+<li>CommandLine method : just run the below command in terminal as normal user.<pre><code>$ $LOROOT/instdir/program/unopkg add &lt;/path/to/&gt;SimpleComponent.oxt
+</code></pre>You can remove an extension with its name (without path) via unopkg, for example to remove SimpleComponent.oxt  :<pre><code>$ $LOROOT/instdir/program/unopkg remove SimpleComponent.oxt
 </code></pre></li>
 </ul>
 <h3 id="step-8">Step 8</h3>
@@ -1029,10 +1043,10 @@ $ zip -r ../../bin/SimpleComponent.oxt *
         </div>
 
         
-        <a href="../extensions/part3.html" class="navigation navigation-prev " aria-label="Previous page: Part3"><i class="fa fa-angle-left"></i></a>
+        <a href="../extensions/part3.html" class="navigation navigation-prev " aria-label="Previous page: Part3 UNO communication"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../extensions/part5.html" class="navigation navigation-next " aria-label="Next page: Part5"><i class="fa fa-angle-right"></i></a>
+        <a href="../extensions/part5.html" class="navigation navigation-next " aria-label="Next page: Part5 Addon"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
