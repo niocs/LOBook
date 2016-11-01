@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.8" data-basepath=".." data-revision="Tue Nov 01 2016 09:53:48 GMT+0530 (IST)">
+    <div class="book" data-level="4.8" data-basepath=".." data-revision="Tue Nov 01 2016 10:04:16 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -587,14 +587,14 @@ The job component must implement the service <code>com.sun.star.task.Job</code> 
     AsyncJobImpl( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::uno::XComponentContext &gt; &amp;rxContext )
         : mxContext( rxContext )
     {
-    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Created AsyncJobImpl object : %p\n&quot;</span>, <span class="hljs-keyword">this</span>); fflush(stdout);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Created AsyncJobImpl object : %p\n&quot;</span>, <span class="hljs-keyword">this</span>); fflush(stdout);
     }
 
     <span class="hljs-comment">// XAsyncJob methods</span>
     <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span> SAL_CALL <span class="hljs-title">executeAsync</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Sequence&lt; ::com::sun::star::beans::NamedValue &gt;&amp; rArgs,
-                    <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::task::XJobListener &gt;&amp; rxListener )</span>
-    <span class="hljs-title">throw</span><span class="hljs-params">(::com::sun::star::lang::IllegalArgumentException,
-          ::com::sun::star::uno::RuntimeException)</span> override</span>;
+                                        <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::task::XJobListener &gt;&amp; rxListener )</span>
+        <span class="hljs-title">throw</span><span class="hljs-params">(::com::sun::star::lang::IllegalArgumentException,
+              ::com::sun::star::uno::RuntimeException)</span> override</span>;
 
     <span class="hljs-comment">// XServiceInfo methods</span>
     <span class="hljs-keyword">virtual</span> ::rtl::<span class="hljs-function">OUString SAL_CALL <span class="hljs-title">getImplementationName</span><span class="hljs-params">()</span>
@@ -607,23 +607,23 @@ The job component must implement the service <code>com.sun.star.task.Job</code> 
     <span class="hljs-comment">// A struct to store some job related info when executeAsync() is called</span>
     <span class="hljs-keyword">struct</span> AsyncJobImplInfo
     {
-    ::rtl::OUString aEnvType;
-    ::rtl::OUString aEventName;
-    ::rtl::OUString aAlias;
-    ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XFrame &gt; xFrame;
+        ::rtl::OUString aEnvType;
+        ::rtl::OUString aEventName;
+        ::rtl::OUString aAlias;
+        ::com::sun::star::uno::Reference&lt; ::com::sun::star::frame::XFrame &gt; xFrame;
 
-    ::rtl::OUString aGenericConfigList, aJobConfigList, aEnvironmentList, aDynamicDataList;
+        ::rtl::OUString aGenericConfigList, aJobConfigList, aEnvironmentList, aDynamicDataList;
     };
 
 <span class="hljs-keyword">private</span>:
 
     ::rtl::<span class="hljs-function">OUString <span class="hljs-title">validateGetInfo</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Sequence&lt; ::com::sun::star::beans::NamedValue &gt;&amp; rArgs,
-                     <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::task::XJobListener &gt;&amp; rxListener,
-                     AsyncJobImplInfo&amp; rJobInfo )</span></span>;
+                                     <span class="hljs-keyword">const</span> ::com::sun::star::uno::Reference&lt; ::com::sun::star::task::XJobListener &gt;&amp; rxListener,
+                                     AsyncJobImplInfo&amp; rJobInfo )</span></span>;
 
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">formatOutArgs</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::com::sun::star::uno::Sequence&lt; ::com::sun::star::beans::NamedValue &gt;&amp; rList,
-            <span class="hljs-keyword">const</span> ::rtl::OUString aListName,
-            ::rtl::OUString&amp; rFormattedList )</span></span>;
+                        <span class="hljs-keyword">const</span> ::rtl::OUString aListName,
+                        ::rtl::OUString&amp; rFormattedList )</span></span>;
 
     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">writeInfoToSheet</span><span class="hljs-params">( <span class="hljs-keyword">const</span> AsyncJobImplInfo&amp; rJobInfo )</span></span>;
 };
@@ -646,7 +646,7 @@ The job component must implement the service <code>com.sun.star.task.Job</code> 
 <pre><code class="lang-cpp"><span class="hljs-comment">// XAsyncJob method implementations</span>
 
 <span class="hljs-keyword">void</span> SAL_CALL AsyncJobImpl::executeAsync( <span class="hljs-keyword">const</span> Sequence&lt;NamedValue&gt;&amp; rArgs,
-                      <span class="hljs-keyword">const</span> Reference&lt;XJobListener&gt;&amp; rxListener )
+                                          <span class="hljs-keyword">const</span> Reference&lt;XJobListener&gt;&amp; rxListener )
     <span class="hljs-keyword">throw</span>(IllegalArgumentException, RuntimeException)
 {
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Called executeAsync() : this = %p\n&quot;</span>, <span class="hljs-keyword">this</span>); fflush(stdout);
@@ -655,15 +655,15 @@ The job component must implement the service <code>com.sun.star.task.Job</code> 
     OUString aErr = validateGetInfo( rArgs, rxListener, aJobInfo );
     <span class="hljs-keyword">if</span> ( !aErr.isEmpty() )
     {
-    sal_Int16 nArgPos = <span class="hljs-number">0</span>;    
-    <span class="hljs-keyword">if</span> ( aErr.startsWith( <span class="hljs-string">&quot;Listener&quot;</span> ) )
-        nArgPos = <span class="hljs-number">1</span>;
+        sal_Int16 nArgPos = <span class="hljs-number">0</span>;        
+        <span class="hljs-keyword">if</span> ( aErr.startsWith( <span class="hljs-string">&quot;Listener&quot;</span> ) )
+            nArgPos = <span class="hljs-number">1</span>;
 
-    <span class="hljs-keyword">throw</span> IllegalArgumentException(
-        aErr,
-        <span class="hljs-comment">// resolve to XInterface reference:</span>
-        <span class="hljs-keyword">static_cast</span>&lt; ::cppu::OWeakObject * &gt;(<span class="hljs-keyword">this</span>),
-        nArgPos ); <span class="hljs-comment">// argument pos</span>
+        <span class="hljs-keyword">throw</span> IllegalArgumentException(
+            aErr,
+            <span class="hljs-comment">// resolve to XInterface reference:</span>
+            <span class="hljs-keyword">static_cast</span>&lt; ::cppu::OWeakObject * &gt;(<span class="hljs-keyword">this</span>),
+            nArgPos ); <span class="hljs-comment">// argument pos</span>
     }
 
     writeInfoToSheet( aJobInfo );
@@ -673,12 +673,12 @@ The job component must implement the service <code>com.sun.star.task.Job</code> 
 
     <span class="hljs-keyword">if</span> ( bIsDispatch )
     {
-    aReturn[<span class="hljs-number">0</span>].Name  = <span class="hljs-string">&quot;SendDispatchResult&quot;</span>;
-    DispatchResultEvent aResultEvent;
-    aResultEvent.Source = (cppu::OWeakObject*)<span class="hljs-keyword">this</span>;
-    aResultEvent.State = DispatchResultState::SUCCESS;
-    aResultEvent.Result &lt;&lt;= <span class="hljs-keyword">true</span>;
-    aReturn[<span class="hljs-number">0</span>].Value &lt;&lt;= aResultEvent;
+        aReturn[<span class="hljs-number">0</span>].Name  = <span class="hljs-string">&quot;SendDispatchResult&quot;</span>;
+        DispatchResultEvent aResultEvent;
+        aResultEvent.Source = (cppu::OWeakObject*)<span class="hljs-keyword">this</span>;
+        aResultEvent.State = DispatchResultState::SUCCESS;
+        aResultEvent.Result &lt;&lt;= <span class="hljs-keyword">true</span>;
+        aReturn[<span class="hljs-number">0</span>].Value &lt;&lt;= aResultEvent;
     }
 
     rxListener-&gt;jobFinished( Reference&lt;com::sun::star::task::XAsyncJob&gt;(<span class="hljs-keyword">this</span>), makeAny(aReturn));
@@ -687,11 +687,11 @@ The job component must implement the service <code>com.sun.star.task.Job</code> 
 
 
 OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> Sequence&lt;NamedValue&gt;&amp; rArgs,
-                    <span class="hljs-keyword">const</span> Reference&lt;XJobListener&gt;&amp; rxListener,
-                    AsyncJobImpl::AsyncJobImplInfo&amp; rJobInfo )
+                                        <span class="hljs-keyword">const</span> Reference&lt;XJobListener&gt;&amp; rxListener,
+                                        AsyncJobImpl::AsyncJobImplInfo&amp; rJobInfo )
 {
     <span class="hljs-keyword">if</span> ( !rxListener.is() )
-    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Listener : invalid listener&quot;</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Listener : invalid listener&quot;</span>;
 
     <span class="hljs-comment">// Extract all sublists from rArgs.</span>
     Sequence&lt;NamedValue&gt; aGenericConfig;
@@ -702,60 +702,60 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
     sal_Int32 nNumNVs = rArgs.getLength();
     <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumNVs; ++nIdx )
     {
-    <span class="hljs-keyword">if</span> ( rArgs[nIdx].Name.equalsAscii(<span class="hljs-string">&quot;Config&quot;</span>) )
-    {
-        rArgs[nIdx].Value &gt;&gt;= aGenericConfig;
-        formatOutArgs( aGenericConfig, <span class="hljs-string">&quot;Config&quot;</span>, rJobInfo.aGenericConfigList );
-    }
-    <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( rArgs[nIdx].Name.equalsAscii(&quot;JobConfig&quot;)</span> )
-    </span>{
-        rArgs[nIdx].Value &gt;&gt;= aJobConfig;
-        formatOutArgs( aJobConfig, <span class="hljs-string">&quot;JobConfig&quot;</span>, rJobInfo.aJobConfigList );
-    }
-    <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( rArgs[nIdx].Name.equalsAscii(&quot;Environment&quot;)</span> )
-    </span>{
-        rArgs[nIdx].Value &gt;&gt;= aEnvironment;
-        formatOutArgs( aEnvironment, <span class="hljs-string">&quot;Environment&quot;</span>, rJobInfo.aEnvironmentList );
-    }
-    <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( rArgs[nIdx].Name.equalsAscii(&quot;DynamicData&quot;)</span> )
-    </span>{
-        rArgs[nIdx].Value &gt;&gt;= aDynamicData;
-        formatOutArgs( aDynamicData, <span class="hljs-string">&quot;DynamicData&quot;</span>, rJobInfo.aDynamicDataList );
-    }
+        <span class="hljs-keyword">if</span> ( rArgs[nIdx].Name.equalsAscii(<span class="hljs-string">&quot;Config&quot;</span>) )
+        {
+            rArgs[nIdx].Value &gt;&gt;= aGenericConfig;
+            formatOutArgs( aGenericConfig, <span class="hljs-string">&quot;Config&quot;</span>, rJobInfo.aGenericConfigList );
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( rArgs[nIdx].Name.equalsAscii(&quot;JobConfig&quot;)</span> )
+        </span>{
+            rArgs[nIdx].Value &gt;&gt;= aJobConfig;
+            formatOutArgs( aJobConfig, <span class="hljs-string">&quot;JobConfig&quot;</span>, rJobInfo.aJobConfigList );
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( rArgs[nIdx].Name.equalsAscii(&quot;Environment&quot;)</span> )
+        </span>{
+            rArgs[nIdx].Value &gt;&gt;= aEnvironment;
+            formatOutArgs( aEnvironment, <span class="hljs-string">&quot;Environment&quot;</span>, rJobInfo.aEnvironmentList );
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( rArgs[nIdx].Name.equalsAscii(&quot;DynamicData&quot;)</span> )
+        </span>{
+            rArgs[nIdx].Value &gt;&gt;= aDynamicData;
+            formatOutArgs( aDynamicData, <span class="hljs-string">&quot;DynamicData&quot;</span>, rJobInfo.aDynamicDataList );
+        }
     }
 
     <span class="hljs-comment">// Analyze the environment info. This sub list is the only guaranteed one!</span>
     <span class="hljs-keyword">if</span> ( !aEnvironment.hasElements() )
-    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Args : no environment&quot;</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Args : no environment&quot;</span>;
 
     sal_Int32 nNumEnvEntries = aEnvironment.getLength();
     <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumEnvEntries; ++nIdx )
     {
-    <span class="hljs-keyword">if</span> ( aEnvironment[nIdx].Name.equalsAscii(<span class="hljs-string">&quot;EnvType&quot;</span>) )
-        aEnvironment[nIdx].Value &gt;&gt;= rJobInfo.aEnvType;
+        <span class="hljs-keyword">if</span> ( aEnvironment[nIdx].Name.equalsAscii(<span class="hljs-string">&quot;EnvType&quot;</span>) )
+            aEnvironment[nIdx].Value &gt;&gt;= rJobInfo.aEnvType;
 
-    <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( aEnvironment[nIdx].Name.equalsAscii(&quot;EventName&quot;)</span> )
-        aEnvironment[nIdx].Value &gt;&gt;</span>= rJobInfo.aEventName;
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( aEnvironment[nIdx].Name.equalsAscii(&quot;EventName&quot;)</span> )
+            aEnvironment[nIdx].Value &gt;&gt;</span>= rJobInfo.aEventName;
 
-    <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( aEnvironment[nIdx].Name.equalsAscii(&quot;Frame&quot;)</span> )
-        aEnvironment[nIdx].Value &gt;&gt;</span>= rJobInfo.xFrame;
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( aEnvironment[nIdx].Name.equalsAscii(&quot;Frame&quot;)</span> )
+            aEnvironment[nIdx].Value &gt;&gt;</span>= rJobInfo.xFrame;
     }
 
     <span class="hljs-comment">// Further the environment property &quot;EnvType&quot; is required as minimum.</span>
 
     <span class="hljs-keyword">if</span> ( rJobInfo.aEnvType.isEmpty() ||
-     ( ( !rJobInfo.aEnvType.equalsAscii(<span class="hljs-string">&quot;EXECUTOR&quot;</span>) ) &amp;&amp;
-       ( !rJobInfo.aEnvType.equalsAscii(<span class="hljs-string">&quot;DISPATCH&quot;</span>) )
-         )    )
-    <span class="hljs-keyword">return</span> OUString(<span class="hljs-string">&quot;Args : \&quot;&quot;</span> + rJobInfo.aEnvType + <span class="hljs-string">&quot;\&quot; isn&apos;t a valid value for EnvType&quot;</span>);
+         ( ( !rJobInfo.aEnvType.equalsAscii(<span class="hljs-string">&quot;EXECUTOR&quot;</span>) ) &amp;&amp;
+           ( !rJobInfo.aEnvType.equalsAscii(<span class="hljs-string">&quot;DISPATCH&quot;</span>) )
+             )        )
+        <span class="hljs-keyword">return</span> OUString(<span class="hljs-string">&quot;Args : \&quot;&quot;</span> + rJobInfo.aEnvType + <span class="hljs-string">&quot;\&quot; isn&apos;t a valid value for EnvType&quot;</span>);
 
     <span class="hljs-comment">// Analyze the set of shared config data.</span>
     <span class="hljs-keyword">if</span> ( aGenericConfig.hasElements() )
     {
-    sal_Int32 nNumGenCfgEntries = aGenericConfig.getLength();
-    <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumGenCfgEntries; ++nIdx )
-        <span class="hljs-keyword">if</span> ( aGenericConfig[nIdx].Name.equalsAscii(<span class="hljs-string">&quot;Alias&quot;</span>) )
-        aGenericConfig[nIdx].Value &gt;&gt;= rJobInfo.aAlias;
+        sal_Int32 nNumGenCfgEntries = aGenericConfig.getLength();
+        <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumGenCfgEntries; ++nIdx )
+            <span class="hljs-keyword">if</span> ( aGenericConfig[nIdx].Name.equalsAscii(<span class="hljs-string">&quot;Alias&quot;</span>) )
+                aGenericConfig[nIdx].Value &gt;&gt;= rJobInfo.aAlias;
     }
 
     <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;
@@ -763,24 +763,24 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
 
 
 <span class="hljs-keyword">void</span> AsyncJobImpl::formatOutArgs( <span class="hljs-keyword">const</span> Sequence&lt;NamedValue&gt;&amp; rList,
-                  <span class="hljs-keyword">const</span> OUString aListName,
-                  OUString&amp; rFormattedList )
+                                  <span class="hljs-keyword">const</span> OUString aListName,
+                                  OUString&amp; rFormattedList )
 {
     <span class="hljs-function">OUStringBuffer <span class="hljs-title">aBuf</span><span class="hljs-params">( 512 )</span></span>;
     aBuf.append(<span class="hljs-string">&quot;List \&quot;&quot;</span> + aListName + <span class="hljs-string">&quot;\&quot; : &quot;</span>);
     <span class="hljs-keyword">if</span> ( !rList.hasElements() )
-    aBuf.append(<span class="hljs-string">&quot;0 items&quot;</span>);
+        aBuf.append(<span class="hljs-string">&quot;0 items&quot;</span>);
     <span class="hljs-keyword">else</span>
     {
-    sal_Int32 nNumEntries = rList.getLength();
-    aBuf.append(nNumEntries).append(<span class="hljs-string">&quot; item(s) : { &quot;</span>);
-    <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumEntries; ++nIdx )
-    {
-        OUString aVal;
-        rList[nIdx].Value &gt;&gt;= aVal;
-        aBuf.append(<span class="hljs-string">&quot;\&quot;&quot;</span> + rList[nIdx].Name + <span class="hljs-string">&quot;\&quot; : \&quot;&quot;</span> + aVal + <span class="hljs-string">&quot;\&quot;, &quot;</span>);
-    }
-    aBuf.append(<span class="hljs-string">&quot; }&quot;</span>);
+        sal_Int32 nNumEntries = rList.getLength();
+        aBuf.append(nNumEntries).append(<span class="hljs-string">&quot; item(s) : { &quot;</span>);
+        <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumEntries; ++nIdx )
+        {
+            OUString aVal;
+            rList[nIdx].Value &gt;&gt;= aVal;
+            aBuf.append(<span class="hljs-string">&quot;\&quot;&quot;</span> + rList[nIdx].Name + <span class="hljs-string">&quot;\&quot; : \&quot;&quot;</span> + aVal + <span class="hljs-string">&quot;\&quot;, &quot;</span>);
+        }
+        aBuf.append(<span class="hljs-string">&quot; }&quot;</span>);
     }
 
     rFormattedList = aBuf.toString();
@@ -790,23 +790,23 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
 <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">WriteStringsToSheet</span><span class="hljs-params">( <span class="hljs-keyword">const</span> Reference&lt; XFrame &gt; &amp;rxFrame, <span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">vector</span>&lt;OUString&gt;&amp; rStrings )</span>
 </span>{
     <span class="hljs-keyword">if</span> ( !rxFrame.is() )
-    <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">return</span>;
 
     Reference&lt; XController &gt; xCtrl = rxFrame-&gt;getController();
     <span class="hljs-keyword">if</span> ( !xCtrl.is() )
-    <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">return</span>;
 
     Reference&lt; XModel &gt; xModel = xCtrl-&gt;getModel();
     <span class="hljs-keyword">if</span> ( !xModel.is() )
-    <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">return</span>;
 
     Reference&lt; XSpreadsheetDocument &gt; xSpreadsheetDocument( xModel, UNO_QUERY );
     <span class="hljs-keyword">if</span> ( !xSpreadsheetDocument.is() )
-    <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">return</span>;
 
     Reference&lt; XSpreadsheets &gt; xSpreadsheets = xSpreadsheetDocument-&gt;getSheets();
     <span class="hljs-keyword">if</span> ( !xSpreadsheets-&gt;hasByName(<span class="hljs-string">&quot;Sheet1&quot;</span>) )
-    <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">return</span>;
 
     Any aSheet = xSpreadsheets-&gt;getByName(<span class="hljs-string">&quot;Sheet1&quot;</span>);
 
@@ -815,10 +815,10 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
     size_t nNumStrings = rStrings.size();
     <span class="hljs-keyword">for</span> ( size_t nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumStrings; ++nIdx )
     {
-    Reference&lt; XCell &gt; xCell = xSpreadsheet-&gt;getCellByPosition(<span class="hljs-number">0</span>, nIdx);
-    xCell-&gt;setFormula(rStrings[nIdx]);
-    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Wrote \&quot;%s\&quot; to Cell A%d\n&quot;</span>,
-           OUStringToOString( rStrings[nIdx], RTL_TEXTENCODING_ASCII_US ).getStr(), nIdx); fflush(stdout);
+        Reference&lt; XCell &gt; xCell = xSpreadsheet-&gt;getCellByPosition(<span class="hljs-number">0</span>, nIdx);
+        xCell-&gt;setFormula(rStrings[nIdx]);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Wrote \&quot;%s\&quot; to Cell A%d\n&quot;</span>,
+               OUStringToOString( rStrings[nIdx], RTL_TEXTENCODING_ASCII_US ).getStr(), nIdx); fflush(stdout);
     }
 }
 
@@ -826,17 +826,17 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
 {
     <span class="hljs-keyword">if</span> ( !rJobInfo.xFrame.is() )
     {
-    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Frame passed is null, cannot write to sheet !\n&quot;</span>);
-    fflush(stdout);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Frame passed is null, cannot write to sheet !\n&quot;</span>);
+        fflush(stdout);
     }
     std::<span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;OUString&gt;</span> aStrList = {
-    <span class="hljs-string">&quot;EnvType = &quot;</span> + rJobInfo.aEnvType,
-    <span class="hljs-string">&quot;EventName = &quot;</span> + rJobInfo.aEventName,
-    <span class="hljs-string">&quot;Alias = &quot;</span> + rJobInfo.aAlias,
-    rJobInfo.aGenericConfigList,
-    rJobInfo.aJobConfigList,
-    rJobInfo.aEnvironmentList,
-    rJobInfo.aDynamicDataList
+        <span class="hljs-string">&quot;EnvType = &quot;</span> + rJobInfo.aEnvType,
+        <span class="hljs-string">&quot;EventName = &quot;</span> + rJobInfo.aEventName,
+        <span class="hljs-string">&quot;Alias = &quot;</span> + rJobInfo.aAlias,
+        rJobInfo.aGenericConfigList,
+        rJobInfo.aJobConfigList,
+        rJobInfo.aEnvironmentList,
+        rJobInfo.aDynamicDataList
     };
 
     WriteStringsToSheet( rJobInfo.xFrame, aStrList );
@@ -851,7 +851,7 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
 <p>We specify our job&apos;s alias, attached events in an xml file called <code>Job.xcu</code>.</p>
 <pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-title">oor:component-data</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;Jobs&quot;</span> <span class="hljs-attribute">oor:package</span>=<span class="hljs-value">&quot;org.openoffice.Office&quot;</span> <span class="hljs-attribute">xmlns:oor</span>=<span class="hljs-value">&quot;http://openoffice.org/2001/registry&quot;</span> <span class="hljs-attribute">xmlns:xs</span>=<span class="hljs-value">&quot;http://www.w3.org/2001/XMLSchema&quot;</span> <span class="hljs-attribute">xmlns:xsi</span>=<span class="hljs-value">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;Jobs&quot;</span>&gt;</span>
-    <span class="hljs-comment">&lt;!--            vvvvvvvvvvv    AsyncJobImpl is the alias --&gt;</span>
+        <span class="hljs-comment">&lt;!--            vvvvvvvvvvv    AsyncJobImpl is the alias --&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;AsyncJobImpl&quot;</span> <span class="hljs-attribute">oor:op</span>=<span class="hljs-value">&quot;replace&quot;</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">prop</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;Service&quot;</span> <span class="hljs-attribute">oor:type</span>=<span class="hljs-value">&quot;xs:string&quot;</span>&gt;</span>
                 <span class="hljs-tag">&lt;<span class="hljs-title">value</span>&gt;</span>inco.niocs.test.AsyncJobImpl<span class="hljs-tag">&lt;/<span class="hljs-title">value</span>&gt;</span>
@@ -859,13 +859,13 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
         <span class="hljs-tag">&lt;/<span class="hljs-title">node</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-title">node</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;Events&quot;</span>&gt;</span>
-    <span class="hljs-comment">&lt;!--
+        <span class="hljs-comment">&lt;!--
         &lt;node oor:name=&quot;onFirstVisibleTask&quot; oor:op=&quot;modify&quot;&gt;
             &lt;node oor:name=&quot;JobList&quot;&gt;
                 &lt;node oor:name=&quot;AsyncJobImpl&quot; oor:op=&quot;replace&quot;/&gt;
             &lt;/node&gt;
         &lt;/node&gt;
-    --&gt;</span>
+        --&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;onMyOwnJobEvent&quot;</span> <span class="hljs-attribute">oor:op</span>=<span class="hljs-value">&quot;replace&quot;</span>&gt;</span>
             <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;JobList&quot;</span>&gt;</span>
                 <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;AsyncJobImpl&quot;</span> <span class="hljs-attribute">oor:op</span>=<span class="hljs-value">&quot;replace&quot;</span>/&gt;</span>
@@ -898,7 +898,7 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
                             <span class="hljs-tag">&lt;<span class="hljs-title">value</span>&gt;</span>com.sun.star.sheet.SpreadsheetDocument<span class="hljs-tag">&lt;/<span class="hljs-title">value</span>&gt;</span>
                         <span class="hljs-tag">&lt;/<span class="hljs-title">prop</span>&gt;</span>
                     <span class="hljs-tag">&lt;/<span class="hljs-title">node</span>&gt;</span>
-            <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;m2&quot;</span> <span class="hljs-attribute">oor:op</span>=<span class="hljs-value">&quot;replace&quot;</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;m2&quot;</span> <span class="hljs-attribute">oor:op</span>=<span class="hljs-value">&quot;replace&quot;</span>&gt;</span>
                         <span class="hljs-tag">&lt;<span class="hljs-title">prop</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;URL&quot;</span> <span class="hljs-attribute">oor:type</span>=<span class="hljs-value">&quot;xs:string&quot;</span>&gt;</span>
                             <span class="hljs-tag">&lt;<span class="hljs-title">value</span>&gt;</span>vnd.sun.star.job:event=onMyOwnJobEvent<span class="hljs-tag">&lt;/<span class="hljs-title">value</span>&gt;</span>
                         <span class="hljs-tag">&lt;/<span class="hljs-title">prop</span>&gt;</span>
@@ -912,7 +912,7 @@ OUString AsyncJobImpl::validateGetInfo( <span class="hljs-keyword">const</span> 
                             <span class="hljs-tag">&lt;<span class="hljs-title">value</span>&gt;</span>com.sun.star.sheet.SpreadsheetDocument<span class="hljs-tag">&lt;/<span class="hljs-title">value</span>&gt;</span>
                         <span class="hljs-tag">&lt;/<span class="hljs-title">prop</span>&gt;</span>
                     <span class="hljs-tag">&lt;/<span class="hljs-title">node</span>&gt;</span>
-            <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;m3&quot;</span> <span class="hljs-attribute">oor:op</span>=<span class="hljs-value">&quot;replace&quot;</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-title">node</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;m3&quot;</span> <span class="hljs-attribute">oor:op</span>=<span class="hljs-value">&quot;replace&quot;</span>&gt;</span>
                         <span class="hljs-tag">&lt;<span class="hljs-title">prop</span> <span class="hljs-attribute">oor:name</span>=<span class="hljs-value">&quot;URL&quot;</span> <span class="hljs-attribute">oor:type</span>=<span class="hljs-value">&quot;xs:string&quot;</span>&gt;</span>
                             <span class="hljs-tag">&lt;<span class="hljs-title">value</span>&gt;</span>vnd.sun.star.job:service=inco.niocs.test.AsyncJobImpl<span class="hljs-tag">&lt;/<span class="hljs-title">value</span>&gt;</span>
                         <span class="hljs-tag">&lt;/<span class="hljs-title">prop</span>&gt;</span>
