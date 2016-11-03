@@ -1,0 +1,821 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
+        <title>Part8 SingletonComponent | Libreoffice Blog</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.0.2">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+        
+    
+    
+    
+    <link rel="prev" href="../extensions/part7.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <link rel="stylesheet" href="../gitbook/style.css">
+    
+    
+
+        
+    <div class="book" data-level="4.9" data-basepath=".." data-revision="Thu Nov 03 2016 09:58:21 GMT+0530 (IST)">
+    
+
+<div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Type to search" class="form-control" />
+    </div>
+    <ul class="summary">
+        
+        
+        
+        
+
+        
+
+        
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="../index.html">
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="patches/index.html">
+            
+                
+                    <a href="../patches/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        patches
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1" data-path="patches/rsu.html">
+            
+                
+                    <a href="../patches/rsu.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.1.</b>
+                        
+                        Red squiggly underline bug
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="calcarch/index.html">
+            
+                
+                    <a href="../calcarch/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        Calc architecture
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="calcarch/overview.html">
+            
+                
+                    <a href="../calcarch/overview.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        overview
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="calcarch/core.html">
+            
+                
+                    <a href="../calcarch/core.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        core
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="calcarch/ui.html">
+            
+                
+                    <a href="../calcarch/ui.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        ui
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="calcarch/filter.html">
+            
+                
+                    <a href="../calcarch/filter.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        filter
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="misc/index.html">
+            
+                
+                    <a href="../misc/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        Libreoffice misc
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.1" data-path="misc/devsetup.html">
+            
+                
+                    <a href="../misc/devsetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        devsetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="misc/sdksetup.html">
+            
+                
+                    <a href="../misc/sdksetup.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        sdksetup
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="misc/devserver.html">
+            
+                
+                    <a href="../misc/devserver.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.3.</b>
+                        
+                        devserver
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="misc/bibisect.html">
+            
+                
+                    <a href="../misc/bibisect.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.4.</b>
+                        
+                        bibisect
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
+            
+                
+                    <a href="../misc/mdds.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.5.</b>
+                        
+                        mdds
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="misc/namespaces.html">
+            
+                
+                    <a href="../misc/namespaces.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.6.</b>
+                        
+                        namespaces
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="misc/patchchecklist.html">
+            
+                
+                    <a href="../misc/patchchecklist.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.7.</b>
+                        
+                        patchchecklist
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="extensions/index.html">
+            
+                
+                    <a href="../extensions/index.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        LibreOffice extensions
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="extensions/prefaq.html">
+            
+                
+                    <a href="../extensions/prefaq.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        PreFAQ
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="extensions/part1.html">
+            
+                
+                    <a href="../extensions/part1.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.</b>
+                        
+                        Part1 UNO Intro
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="extensions/part2.html">
+            
+                
+                    <a href="../extensions/part2.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.3.</b>
+                        
+                        Part2 Remote Calc
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="extensions/part3.html">
+            
+                
+                    <a href="../extensions/part3.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.4.</b>
+                        
+                        Part3 UNO communication
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="extensions/part4.html">
+            
+                
+                    <a href="../extensions/part4.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.5.</b>
+                        
+                        Part4 Simple component
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="extensions/part5.html">
+            
+                
+                    <a href="../extensions/part5.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.6.</b>
+                        
+                        Part5 Addon
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="extensions/part6.html">
+            
+                
+                    <a href="../extensions/part6.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.7.</b>
+                        
+                        Part6 ProtocolHandler extension
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="extensions/part7.html">
+            
+                
+                    <a href="../extensions/part7.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.8.</b>
+                        
+                        Part7 AsyncJob extension
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.9" data-path="extensions/part8.html">
+            
+                
+                    <a href="../extensions/part8.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.9.</b>
+                        
+                        Part8 SingletonComponent
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+        
+        <li class="divider"></li>
+        <li>
+            <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                Published with GitBook
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header">
+    <!-- Actions Left -->
+    <a href="#" class="btn pull-left toggle-summary" aria-label="Table of Contents"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search" aria-label="Search"><i class="fa fa-search"></i></a>
+    
+    <div id="font-settings-wrapper" class="dropdown pull-left">
+        <a href="#" class="btn toggle-dropdown" aria-label="Font Settings"><i class="fa fa-font"></i>
+        </a>
+        <div class="dropdown-menu font-settings">
+    <div class="dropdown-caret">
+        <span class="caret-outer"></span>
+        <span class="caret-inner"></span>
+    </div>
+
+    <div class="buttons">
+        <button type="button" id="reduce-font-size" class="button size-2">A</button>
+        <button type="button" id="enlarge-font-size" class="button size-2">A</button>
+    </div>
+
+    <div class="buttons font-family-list">
+        <button type="button" data-font="0" class="button">Serif</button>
+        <button type="button" data-font="1" class="button">Sans</button>
+    </div>
+
+    <div class="buttons color-theme-list">
+        <button type="button" id="color-theme-preview-0" class="button size-3" data-theme="0">White</button>
+        <button type="button" id="color-theme-preview-1" class="button size-3" data-theme="1">Sepia</button>
+        <button type="button" id="color-theme-preview-2" class="button size-3" data-theme="2">Night</button>
+    </div>
+</div>
+
+    </div>
+
+    <!-- Actions Right -->
+    
+    <div class="dropdown pull-right">
+        <a href="#" class="btn toggle-dropdown" aria-label="Share"><i class="fa fa-share-alt"></i>
+        </a>
+        <div class="dropdown-menu font-settings dropdown-left">
+            <div class="dropdown-caret">
+                <span class="caret-outer"></span>
+                <span class="caret-inner"></span>
+            </div>
+            <div class="buttons">
+                <button type="button" data-sharing="twitter" class="button">
+                    Share on Twitter
+                </button>
+                <button type="button" data-sharing="google-plus" class="button">
+                    Share on Google
+                </button>
+                <button type="button" data-sharing="facebook" class="button">
+                    Share on Facebook
+                </button>
+                <button type="button" data-sharing="weibo" class="button">
+                    Share on Weibo
+                </button>
+                <button type="button" data-sharing="instapaper" class="button">
+                    Share on Instapaper
+                </button>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <a href="#" target="_blank" class="btn pull-right google-plus-sharing-link sharing-link" data-sharing="google-plus" aria-label="Google"><i class="fa fa-google-plus"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right facebook-sharing-link sharing-link" data-sharing="facebook" aria-label="Facebook"><i class="fa fa-facebook"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right twitter-sharing-link sharing-link" data-sharing="twitter" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
+    
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../" >Libreoffice Blog</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="libreoffice-extension-development-with-c-part-8-singleton-component">Libreoffice extension development with C++ - Part 8 - Singleton Component.</h1>
+<h3 id="audience-selection">Audience selection</h3>
+<ol>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can jump directly to <strong><a href="#prebuilt">Test the prebuilt extension</a></strong></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <strong><a href="#buildsec">Download, build and test the extension</a></strong></li>
+</ol>
+<hr>
+<p>A <em>singleton component</em> is one which is instantiated just one during the whole lifetime of LO process. This may be useful for holding resources that are common to all other component instances. For example if we want to maintain a single long running TCP connection to external server process, we could let a singleton component hold and maintain the network connection.</p>
+<p>In this part we create a singleton component that simulates a single bit global storage that implements a custom interface called <code>inco::niocs::test::XBoolDataStore</code> which has the following methods :</p>
+<ol>
+<li><code>getBool()</code> returns the boolean state stored by the implementation.</li>
+<li><code>setBool()</code> sets the boolean state of the implementation to a user supplied value.</li>
+<li><code>getAdddress()</code> returns the memory address of the singleton component class.</li>
+</ol>
+<p>We define the custom interface <code>inco::niocs::test::XBoolDataStore</code> and singleton named <code>theBoolDataStore</code> in the idl file called <code>SimpleDataStore.idl</code> using the <code>singleton</code> keyword.</p>
+<pre><code>#ifndef __inco_niocs_test_simpledatastore_idl__
+#define __inco_niocs_test_simpledatastore_idl__
+
+module inco { module niocs { module test {
+
+    interface XBoolDataStore
+    {
+        boolean getBool();
+        void    setBool( [in]boolean bSet );
+    string  getAddress();
+    };
+
+    singleton theBoolDataStore : XBoolDataStore;
+    service BoolDataStore : XBoolDataStore;
+
+}; }; };
+
+#endif
+</code></pre><p>Lets now define the class <code>BoolDataStoreImpl</code> that implements the singleton <code>theBoolDataStore</code> in singleton.hxx.</p>
+<pre><code class="lang-cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> IMPLEMENTATION_NAME &quot;inco.niocs.test.BoolDataStoreImpl&quot;</span>
+
+<span class="hljs-keyword">class</span> BoolDataStoreImpl : <span class="hljs-keyword">public</span> cppu::WeakImplHelper2
+&lt;
+    css::lang::XServiceInfo,
+    inco::niocs::test::XBoolDataStore
+&gt;
+{
+    sal_Bool bData;  <span class="hljs-comment">// boolean state </span>
+<span class="hljs-keyword">public</span>:
+    BoolDataStoreImpl() <span class="hljs-keyword">throw</span> ()
+            : bData(<span class="hljs-keyword">false</span>)
+    {}
+    <span class="hljs-keyword">virtual</span> ~BoolDataStoreImpl() {}
+
+    <span class="hljs-comment">// XBoolDataStore methods</span>
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> sal_Bool SAL_CALL <span class="hljs-title">getBool</span><span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> bData; }
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span>     SAL_CALL <span class="hljs-title">setBool</span><span class="hljs-params">( <span class="hljs-keyword">const</span> sal_Bool bSet )</span> </span>{ bData = bSet; }
+    <span class="hljs-keyword">virtual</span> ::rtl::<span class="hljs-function">OUString SAL_CALL <span class="hljs-title">getAddress</span><span class="hljs-params">()</span></span>;
+
+    <span class="hljs-comment">// XServiceInfo methods</span>
+    <span class="hljs-keyword">virtual</span> ::rtl::<span class="hljs-function">OUString SAL_CALL <span class="hljs-title">getImplementationName</span><span class="hljs-params">()</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">virtual</span> sal_Bool SAL_CALL <span class="hljs-title">supportsService</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::rtl::OUString&amp; aServiceName )</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
+    <span class="hljs-keyword">virtual</span> css::uno::Sequence&lt; ::rtl::OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">getSupportedServiceNames</span><span class="hljs-params">()</span>
+        <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
+};
+
+
+css::uno::Sequence&lt; ::rtl::OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_getSupportedServiceNames</span><span class="hljs-params">()</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
+
+::com::sun::star::uno::Reference&lt; ::com::sun::star::uno::XInterface &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_createInstance</span><span class="hljs-params">(
+    <span class="hljs-keyword">const</span> css::uno::Reference&lt; css::uno::XComponentContext &gt; &amp; rContext )</span>
+    <span class="hljs-title">throw</span><span class="hljs-params">( css::uno::Exception )</span></span>;
+</code></pre>
+<p>We now define the methods of <code>BoolDataStoreImpl</code> in singleton.cxx</p>
+<pre><code class="lang-cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> SERVICE_NAME &quot;inco.niocs.test.BoolDataStore&quot;</span>
+
+OUString SAL_CALL BoolDataStoreImpl::getAddress()
+{
+    <span class="hljs-keyword">return</span> OUString::number(<span class="hljs-keyword">reinterpret_cast</span>&lt;std::<span class="hljs-keyword">uintptr_t</span>&gt;(<span class="hljs-keyword">this</span>));
+}
+
+<span class="hljs-comment">// DataStoreImpl : XServiceInfo</span>
+OUString SAL_CALL BoolDataStoreImpl::getImplementationName()
+    <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+    <span class="hljs-keyword">return</span> IMPLEMENTATION_NAME;
+}
+
+sal_Bool SAL_CALL BoolDataStoreImpl::supportsService( <span class="hljs-keyword">const</span> OUString&amp; rServiceName )
+    <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+    <span class="hljs-keyword">return</span> cppu::supportsService(<span class="hljs-keyword">this</span>, rServiceName);
+}
+
+Sequence&lt; OUString &gt; SAL_CALL BoolDataStoreImpl::getSupportedServiceNames(  )
+    <span class="hljs-keyword">throw</span> (RuntimeException)
+{
+    <span class="hljs-keyword">return</span> BoolDataStoreImpl_getSupportedServiceNames();
+}
+</code></pre>
+<p>We need to ensure that only one instance of our component is to be made ever, we ensure this by doing :</p>
+<pre><code class="lang-cpp"><span class="hljs-keyword">struct</span> Instance {
+    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">Instance</span><span class="hljs-params">(
+    Reference&lt;XComponentContext&gt; <span class="hljs-keyword">const</span> &amp; <span class="hljs-comment">/*rxContext*/</span>)</span>:
+    <span class="hljs-title">instance</span><span class="hljs-params">(
+        <span class="hljs-keyword">static_cast</span>&lt;cppu::OWeakObject *&gt;(new BoolDataStoreImpl()</span>))
+    </span>{}
+    Reference&lt;XInterface&gt; instance;
+};
+
+
+<span class="hljs-keyword">struct</span> Singleton:
+    <span class="hljs-keyword">public</span> rtl::StaticWithArg&lt;
+    Instance, Reference&lt;XComponentContext&gt;, Singleton&gt;
+{};
+</code></pre>
+<p>The speciality of the <code>Singleton</code> struct is that we can if we call Singleton::get() it will create an instance of <code>BoolDataStoreImpl</code> if not already created and return it. If there is already an instance of <code>BoolDataStoreImpl</code> is created before, then it will just return that single instance.</p>
+<p>Now we just use this struct to define the BoolDataStoreImpl_createInstance() helper function.</p>
+<pre><code class="lang-cpp">Sequence&lt; OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_getSupportedServiceNames</span><span class="hljs-params">()</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">(RuntimeException)</span>
+</span>{
+    Sequence &lt; OUString &gt; aRet(<span class="hljs-number">1</span>);
+    OUString* pArray = aRet.getArray();
+    pArray[<span class="hljs-number">0</span>] =  OUString ( SERVICE_NAME );
+    <span class="hljs-keyword">return</span> aRet;    
+}
+
+Reference&lt; XInterface &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_createInstance</span><span class="hljs-params">( <span class="hljs-keyword">const</span> Reference&lt; XComponentContext &gt; &amp; rxContext )</span>
+    <span class="hljs-title">throw</span><span class="hljs-params">( Exception )</span>
+</span>{
+    <span class="hljs-keyword">return</span> cppu::acquire(<span class="hljs-keyword">static_cast</span>&lt;cppu::OWeakObject *&gt;(
+                 Singleton::get(rxContext).instance.get()));
+}
+</code></pre>
+<p>We now define the component operation functions that registers our singleton to LO using the helper function we created above.</p>
+<pre><code class="lang-cpp"><span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> SAL_DLLPUBLIC_EXPORT <span class="hljs-keyword">void</span> * <span class="hljs-function">SAL_CALL <span class="hljs-title">component_getFactory</span><span class="hljs-params">(<span class="hljs-keyword">const</span> sal_Char * pImplName, <span class="hljs-keyword">void</span> * <span class="hljs-comment">/*pServiceManager*/</span>, <span class="hljs-keyword">void</span> * pRegistryKey)</span>
+</span>{
+    <span class="hljs-keyword">void</span> * pRet = <span class="hljs-number">0</span>;
+
+    <span class="hljs-keyword">if</span> (rtl_str_compare( pImplName, IMPLEMENTATION_NAME ) == <span class="hljs-number">0</span>)
+    {
+        Reference&lt; XSingleComponentFactory &gt; xFactory( createSingleComponentFactory(
+            BoolDataStoreImpl_createInstance,
+            OUString( IMPLEMENTATION_NAME ),
+            BoolDataStoreImpl_getSupportedServiceNames() ) );
+
+        <span class="hljs-keyword">if</span> (xFactory.is())
+        {
+            xFactory-&gt;acquire();
+            pRet = xFactory.get();
+        }
+    }
+
+    <span class="hljs-keyword">return</span> pRet;
+}
+
+<span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> <span class="hljs-function">SAL_DLLPUBLIC_EXPORT <span class="hljs-keyword">void</span> SAL_CALL
+<span class="hljs-title">component_getImplementationEnvironment</span><span class="hljs-params">(
+    <span class="hljs-keyword">char</span> <span class="hljs-keyword">const</span> ** ppEnvTypeName, uno_Environment **)</span>
+</span>{
+    *ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME;
+}
+</code></pre>
+<p>We test the single component by using a macro. This gets the singleton using the implicit <code>get()</code> methods of our singleton twice to store to two different variables and checks if changing state in one affects change in other.</p>
+<pre><code class="lang-vbscript"><span class="hljs-keyword">Sub</span> TestSingleton
+
+    <span class="hljs-keyword">Dim</span> oServiceInst1
+    <span class="hljs-keyword">Dim</span> oServiceInst2
+    <span class="hljs-keyword">Dim</span> bad as Boolean
+    <span class="hljs-keyword">On</span> <span class="hljs-keyword">Error</span> <span class="hljs-keyword">Goto</span> ErrorHandler
+
+    oServiceInst1 = inco.niocs.test.theBoolDataStore.<span class="hljs-keyword">get</span>( GetDefaultContext() )
+    addr1 = oServiceInst1.getAddress()
+    <span class="hljs-keyword">If</span> oServiceInst1.getBool() <span class="hljs-keyword">Then</span>
+        bad = <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
+    oServiceInst1.setBool(<span class="hljs-literal">True</span>)
+    <span class="hljs-keyword">If</span> oServiceInst1.getBool() = <span class="hljs-literal">False</span> <span class="hljs-keyword">Then</span>
+        bad = <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
+
+    oServiceInst2 = inco.niocs.test.theBoolDataStore.<span class="hljs-keyword">get</span>( GetDefaultContext() )
+    addr2 = oServiceInst2.getAddress()
+    <span class="hljs-keyword">If</span> oServiceInst2.getBool() = <span class="hljs-literal">False</span> <span class="hljs-keyword">Then</span>
+        bad = <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
+    oServiceInst2.setBool(<span class="hljs-literal">False</span>)
+    <span class="hljs-keyword">If</span> oServiceInst1.getBool() = <span class="hljs-literal">True</span> <span class="hljs-keyword">Then</span>
+        bad = <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
+
+    <span class="hljs-keyword">If</span> bad <span class="hljs-keyword">Then</span>
+        <span class="hljs-built_in">msgbox</span> <span class="hljs-string">&quot;Bug in singleton component !&quot;</span>
+    <span class="hljs-keyword">Else</span>
+        <span class="hljs-built_in">msgbox</span> <span class="hljs-string">&quot;singleton component works as expected. addr1 = &quot;</span> &amp; addr1 &amp; <span class="hljs-string">&quot; and addr2 = &quot;</span> &amp; addr2
+    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
+
+    <span class="hljs-keyword">Exit</span> <span class="hljs-keyword">Sub</span>
+
+    ErrorHandler:
+    <span class="hljs-built_in">MsgBox</span> <span class="hljs-string">&quot;Error &quot;</span> &amp; <span class="hljs-built_in">Err</span> &amp; <span class="hljs-string">&quot;: &quot;</span> &amp; <span class="hljs-keyword">Error</span>$ &amp; <span class="hljs-string">&quot; (line : &quot;</span> &amp; Erl &amp; <span class="hljs-string">&quot;)&quot;</span>
+    <span class="hljs-comment">&apos;msgbox &quot;singleton component not installed properly&quot;</span>
+
+<span class="hljs-keyword">End</span> <span class="hljs-keyword">Sub</span>
+</code></pre>
+<h2 id="-a-name-buildsec-a-download-build-and-test-the-extension"><a name="buildsec"></a>Download, build and test the extension</h2>
+<p>The whole project can be downloaded, built and installed by doing :</p>
+<pre><code>$ git clone https://github.com/niocs/SingletonComponent.git
+$ cd SingletonComponent
+$ make
+$ $LOROOT/instdir/program/unopkg add /home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/SingletonComponent.oxt
+</code></pre><p>To remove the extension, do :</p>
+<pre><code>$ $LOROOT/instdir/program/unopkg remove SingletonComponent.oxt
+</code></pre><p>To test this component we need to enable macros in Calc. Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc now.
+Open calc and load the document <code>TestSingleton.ods</code> and click on the button in the sheet &quot;Push button&quot;, if everything went well you should see a message box with text <code>singleton component works as expected. addr1 = &lt;number1&gt; and addr2 = &lt;number2&gt;</code>, where <code>number1</code> and <code>number2</code> must be same the number.</p>
+<h2 id="-a-name-prebuilt-a-test-the-prebuilt-extension"><a name="prebuilt"></a>Test the prebuilt extension</h2>
+<p>Download the extension as :</p>
+<pre><code>$ git clone https://github.com/niocs/SingletonComponent.git
+$ cd SingletonComponent
+</code></pre><p>In <code>SingletonComponent</code> directory you will see a file called <code>SingletonComponent.oxt</code>. This is the prebuilt extension. Install this extension using</p>
+<pre><code>$ unopkg add /path/to/SingletonComponent.oxt
+</code></pre><p>To remove this extension do :</p>
+<pre><code>$ unopkg remove SingletonComponent.oxt
+</code></pre><p>To test this component we need to enable macros in Calc. Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc now.
+Open calc and load the document <code>TestSingleton.ods</code> and click on the button in the sheet &quot;Push button&quot;, if everything went well you should see a message box with text <code>singleton component works as expected. addr1 = &lt;number1&gt; and addr2 = &lt;number2&gt;</code>, where <code>number1</code> and <code>number2</code> must be the same number.</p>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="../extensions/part7.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Part7 AsyncJob extension"><i class="fa fa-angle-left"></i></a>
+        
+        
+    </div>
+</div>
+
+        
+<script src="../gitbook/app.js"></script>
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"fontSettings":{"theme":null,"family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

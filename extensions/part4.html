@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="4.5" data-basepath=".." data-revision="Tue Nov 01 2016 10:04:16 GMT+0530 (IST)">
+    <div class="book" data-level="4.5" data-basepath=".." data-revision="Thu Nov 03 2016 09:58:21 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -439,6 +439,21 @@
                             <b>4.8.</b>
                         
                         Part7 AsyncJob extension
+                    </a>
+                
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9" data-path="extensions/part8.html">
+            
+                
+                    <a href="../extensions/part8.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.9.</b>
+                        
+                        Part8 SingletonComponent
                     </a>
                 
             
@@ -911,7 +926,7 @@ There are two ways to do this : one via the extension manager and other via <cod
 </ul>
 <h3 id="step-8">Step 8</h3>
 <p>Lets now test if the extension is working. One way is we can instantiate the services we implemented, via LibreOffice Basic macros. For this we need to enable macros in Calc.
-Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from unstrusted source&quot;. Restart Calc now.</p>
+Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc now.</p>
 <p>You could either follow the below instruction to setup macro and controls to execute it or just open the <code>SimpleComponent.ods</code> provided in the git repo. While opening click enable macros when asked. Now click on the button &quot;Click to test our extension&quot;. On clicking if everything went well, it should show the messages from the <code>MyService1</code>&apos;s <code>methodOne()</code> and <code>MyService2</code>&apos;s <code>methodTwo()</code>.</p>
 <h4 id="creating-an-ods-file-with-macro-to-access-our-extension">Creating an ods file with macro to access our extension.</h4>
 <p>Save the sheet as SimpleComponent.ods . Go to Tools &gt; Macros &gt; Organize Macros &gt; LibreofficeDev Basic &gt; Select &quot;Standard&quot; module inside &quot;SimpleComponent.ods&quot; on the left section &gt; Click &quot;New&quot; button on the right section. Now it will open a Macro editor. Now insert the following Basic funtion named <code>TestMyExtension</code> to instantiate and call the methods on the two services.</p>
@@ -951,7 +966,7 @@ $ cd SimpleUNOComponent
 </code></pre></li>
 </ul>
 </li>
-<li>Now we need to allow macros in Calc if you have not already. Open Calc and go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from unstrusted source&quot;. Restart Calc. This is a one time process.</li>
+<li>Now we need to allow macros in Calc if you have not already. Open Calc and go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc. This is a one time process.</li>
 <li>In the <code>SimpleUNOComponent/</code> directory there is a file called <code>SimpleComponent.ods</code>. This is a spreadsheet file with macros embedded to test the extension. Open this file with calc. While opening click enable macros when asked.</li>
 <li><p>Now click on the button &quot;Click to test our extension&quot; inside the sheet. On clicking, if everything went well, it should show a messagebox showing the text</p>
 <p><code>called methodOne() of Service1 implementation : :SERVICE1:. and called methodTwo() of MyService2 implementation: :SERVICE2:</code>.</p>
