@@ -34,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.9" data-basepath=".." data-revision="Thu Nov 03 2016 09:58:21 GMT+0530 (IST)">
+    <div class="book" data-level="4.9" data-basepath=".." data-revision="Thu Nov 03 2016 21:15:50 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -573,7 +573,7 @@
 <li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <strong><a href="#buildsec">Download, build and test the extension</a></strong></li>
 </ol>
 <hr>
-<p>A <em>singleton component</em> is one which is instantiated just one during the whole lifetime of LO process. This may be useful for holding resources that are common to all other component instances. For example if we want to maintain a single long running TCP connection to external server process, we could let a singleton component hold and maintain the network connection.</p>
+<p>A <em>singleton component</em> is one which is instantiated just once during the whole lifetime of LO process. This may be useful for holding resources that are common to all other component instances. For example if we want to maintain a single long running TCP connection to external server process, we could let a singleton component hold and maintain the network connection.</p>
 <p>In this part we create a singleton component that simulates a single bit global storage that implements a custom interface called <code>inco::niocs::test::XBoolDataStore</code> which has the following methods :</p>
 <ol>
 <li><code>getBool()</code> returns the boolean state stored by the implementation.</li>
