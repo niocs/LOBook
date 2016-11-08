@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>Part8 SingletonComponent | Libreoffice Blog</title>
+        <title>Part9 ContextMenu | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,8 @@
         
     
     
-    <link rel="next" href="../extensions/part9.html" />
     
-    
-    <link rel="prev" href="../extensions/part7.html" />
+    <link rel="prev" href="../extensions/part8.html" />
     
 
         
@@ -36,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.9" data-basepath=".." data-revision="Tue Nov 08 2016 06:25:12 GMT+0530 (IST)">
+    <div class="book" data-level="4.10" data-basepath=".." data-revision="Tue Nov 08 2016 06:25:12 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -445,7 +443,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="4.9" data-path="extensions/part8.html">
+        <li class="chapter " data-level="4.9" data-path="extensions/part8.html">
             
                 
                     <a href="../extensions/part8.html">
@@ -460,7 +458,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.10" data-path="extensions/part9.html">
+        <li class="chapter active" data-level="4.10" data-path="extensions/part9.html">
             
                 
                     <a href="../extensions/part9.html">
@@ -583,229 +581,217 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="libreoffice-extension-development-with-c-part-8-singleton-component">Libreoffice extension development with C++ - Part 8 - Singleton Component.</h1>
+                        <h1 id="libreoffice-extension-development-with-c-part-9-adding-a-context-menu">Libreoffice extension development with C++ - Part 9 - Adding a context menu.</h1>
 <h3 id="audience-selection">Audience selection</h3>
 <ol>
 <li>Audience type <strong><a href="index.html">AUD-C</a></strong> can jump directly to <strong><a href="#prebuilt">Test the prebuilt extension</a></strong></li>
 <li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <strong><a href="#buildsec">Download, build and test the extension</a></strong></li>
 </ol>
 <hr>
-<p>A <em>singleton component</em> is one which is instantiated just once during the whole lifetime of LO process. This may be useful for holding resources that are common to all other component instances. For example if we want to maintain a single long running TCP connection to external server process, we could let a singleton component hold and maintain the network connection.</p>
-<p>In this part we create a singleton component that simulates a single bit global storage that implements a custom interface called <code>inco::niocs::test::XBoolDataStore</code> which has the following methods :</p>
-<ol>
-<li><code>getBool()</code> returns the boolean state stored by the implementation.</li>
-<li><code>setBool()</code> sets the boolean state of the implementation to a user supplied value.</li>
-<li><code>getAdddress()</code> returns the memory address of the singleton component class.</li>
-</ol>
-<p>We define the custom interface <code>inco::niocs::test::XBoolDataStore</code> and singleton named <code>theBoolDataStore</code> in the idl file called <code>SimpleDataStore.idl</code> using the <code>singleton</code> keyword.</p>
-<pre><code>#ifndef __inco_niocs_test_simpledatastore_idl__
-#define __inco_niocs_test_simpledatastore_idl__
-
-module inco { module niocs { module test {
-
-    interface XBoolDataStore
-    {
-        boolean getBool();
-        void    setBool( [in]boolean bSet );
-    string  getAddress();
-    };
-
-    singleton theBoolDataStore : XBoolDataStore;
-    service BoolDataStore : XBoolDataStore;
-
-}; }; };
-
-#endif
-</code></pre><p>Lets now define the class <code>BoolDataStoreImpl</code> that implements the singleton <code>theBoolDataStore</code> in singleton.hxx.</p>
-<pre><code class="lang-cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> IMPLEMENTATION_NAME &quot;inco.niocs.test.BoolDataStoreImpl&quot;</span>
-
-<span class="hljs-keyword">class</span> BoolDataStoreImpl : <span class="hljs-keyword">public</span> cppu::WeakImplHelper2
-&lt;
-    css::lang::XServiceInfo,
-    inco::niocs::test::XBoolDataStore
-&gt;
+<p>Context menu is one that appears when we right-click on a sheet. In this part we are going to add an entry to context menu and assign action to it.</p>
+<p>In order to register a new entry in LO context menu, we need access to <code>Frame</code> object of the current window. For this we are going to make a <code>AsyncJob</code> component that gets executed via a normal addon menu in the menubar. Since we already know how to implement <code>AsyncJob</code> component, we here focus on how we use this component to register a <strong>new context menu entry</strong>.</p>
+<p>A context menu entry can be added by implementing <code>com::sun::star::ui::XContextMenuInterceptor</code> interface which has a single method :</p>
+<pre><code class="lang-cpp">::com::sun::star::ui::<span class="hljs-function">ContextMenuInterceptorAction SAL_CALL <span class="hljs-title">notifyContextMenuExecute</span><span class="hljs-params">(
+    <span class="hljs-keyword">const</span> ::com::sun::star::ui::ContextMenuExecuteEvent&amp; rEvent )</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">( ::com::sun::star::uno::RuntimeException )</span></span>;
+</code></pre>
+<p>and then we register this implementation using <code>XContextMenuInterception</code> object&apos;s <code>registerContextMenuInterceptor()</code> method inside <code>executeAsync()</code> of our <code>AsyncJob</code> component implementation <code>RegisterInterceptorJobImpl</code>. Let us now focus on implementing <code>com::sun::star::ui::XContextMenuInterceptor</code></p>
+<pre><code class="lang-cpp"><span class="hljs-comment">// interceptor.hxx</span>
+<span class="hljs-comment">// XContextMenuInterceptor implementer class</span>
+<span class="hljs-keyword">class</span> ContextMenuInterceptorImpl : <span class="hljs-keyword">public</span> cppu::WeakImplHelper1&lt; ::com::sun::star::ui::XContextMenuInterceptor &gt;
 {
-    sal_Bool bData;  <span class="hljs-comment">// boolean state </span>
+
 <span class="hljs-keyword">public</span>:
-    BoolDataStoreImpl() <span class="hljs-keyword">throw</span> ()
-            : bData(<span class="hljs-keyword">false</span>)
-    {}
-    <span class="hljs-keyword">virtual</span> ~BoolDataStoreImpl() {}
 
-    <span class="hljs-comment">// XBoolDataStore methods</span>
-    <span class="hljs-function"><span class="hljs-keyword">virtual</span> sal_Bool SAL_CALL <span class="hljs-title">getBool</span><span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> bData; }
-    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-keyword">void</span>     SAL_CALL <span class="hljs-title">setBool</span><span class="hljs-params">( <span class="hljs-keyword">const</span> sal_Bool bSet )</span> </span>{ bData = bSet; }
-    <span class="hljs-keyword">virtual</span> ::rtl::<span class="hljs-function">OUString SAL_CALL <span class="hljs-title">getAddress</span><span class="hljs-params">()</span></span>;
-
-    <span class="hljs-comment">// XServiceInfo methods</span>
-    <span class="hljs-keyword">virtual</span> ::rtl::<span class="hljs-function">OUString SAL_CALL <span class="hljs-title">getImplementationName</span><span class="hljs-params">()</span>
-        <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
-    <span class="hljs-function"><span class="hljs-keyword">virtual</span> sal_Bool SAL_CALL <span class="hljs-title">supportsService</span><span class="hljs-params">( <span class="hljs-keyword">const</span> ::rtl::OUString&amp; aServiceName )</span>
-        <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
-    <span class="hljs-keyword">virtual</span> css::uno::Sequence&lt; ::rtl::OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">getSupportedServiceNames</span><span class="hljs-params">()</span>
-        <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
-};
-
-
-css::uno::Sequence&lt; ::rtl::OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_getSupportedServiceNames</span><span class="hljs-params">()</span>
-    <span class="hljs-title">throw</span> <span class="hljs-params">(css::uno::RuntimeException)</span></span>;
-
-::com::sun::star::uno::Reference&lt; ::com::sun::star::uno::XInterface &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_createInstance</span><span class="hljs-params">(
-    <span class="hljs-keyword">const</span> css::uno::Reference&lt; css::uno::XComponentContext &gt; &amp; rContext )</span>
-    <span class="hljs-title">throw</span><span class="hljs-params">( css::uno::Exception )</span></span>;
-</code></pre>
-<p>We now define the methods of <code>BoolDataStoreImpl</code> in singleton.cxx</p>
-<pre><code class="lang-cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">define</span> SERVICE_NAME &quot;inco.niocs.test.BoolDataStore&quot;</span>
-
-OUString SAL_CALL BoolDataStoreImpl::getAddress()
-{
-    <span class="hljs-keyword">return</span> OUString::number(<span class="hljs-keyword">reinterpret_cast</span>&lt;std::<span class="hljs-keyword">uintptr_t</span>&gt;(<span class="hljs-keyword">this</span>));
-}
-
-<span class="hljs-comment">// DataStoreImpl : XServiceInfo</span>
-OUString SAL_CALL BoolDataStoreImpl::getImplementationName()
-    <span class="hljs-keyword">throw</span> (RuntimeException)
-{
-    <span class="hljs-keyword">return</span> IMPLEMENTATION_NAME;
-}
-
-sal_Bool SAL_CALL BoolDataStoreImpl::supportsService( <span class="hljs-keyword">const</span> OUString&amp; rServiceName )
-    <span class="hljs-keyword">throw</span> (RuntimeException)
-{
-    <span class="hljs-keyword">return</span> cppu::supportsService(<span class="hljs-keyword">this</span>, rServiceName);
-}
-
-Sequence&lt; OUString &gt; SAL_CALL BoolDataStoreImpl::getSupportedServiceNames(  )
-    <span class="hljs-keyword">throw</span> (RuntimeException)
-{
-    <span class="hljs-keyword">return</span> BoolDataStoreImpl_getSupportedServiceNames();
-}
-</code></pre>
-<p>We need to ensure that only one instance of our component is to be made ever, we ensure this by doing :</p>
-<pre><code class="lang-cpp"><span class="hljs-keyword">struct</span> Instance {
-    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">Instance</span><span class="hljs-params">(
-    Reference&lt;XComponentContext&gt; <span class="hljs-keyword">const</span> &amp; <span class="hljs-comment">/*rxContext*/</span>)</span>:
-    <span class="hljs-title">instance</span><span class="hljs-params">(
-        <span class="hljs-keyword">static_cast</span>&lt;cppu::OWeakObject *&gt;(new BoolDataStoreImpl()</span>))
-    </span>{}
-    Reference&lt;XInterface&gt; instance;
-};
-
-
-<span class="hljs-keyword">struct</span> Singleton:
-    <span class="hljs-keyword">public</span> rtl::StaticWithArg&lt;
-    Instance, Reference&lt;XComponentContext&gt;, Singleton&gt;
-{};
-</code></pre>
-<p>The speciality of the <code>Singleton</code> struct is that we can if we call Singleton::get() it will create an instance of <code>BoolDataStoreImpl</code> if not already created and return it. If there is already an instance of <code>BoolDataStoreImpl</code> is created before, then it will just return that single instance.</p>
-<p>Now we just use this struct to define the BoolDataStoreImpl_createInstance() helper function.</p>
-<pre><code class="lang-cpp">Sequence&lt; OUString &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_getSupportedServiceNames</span><span class="hljs-params">()</span>
-    <span class="hljs-title">throw</span> <span class="hljs-params">(RuntimeException)</span>
-</span>{
-    Sequence &lt; OUString &gt; aRet(<span class="hljs-number">1</span>);
-    OUString* pArray = aRet.getArray();
-    pArray[<span class="hljs-number">0</span>] =  OUString ( SERVICE_NAME );
-    <span class="hljs-keyword">return</span> aRet;    
-}
-
-Reference&lt; XInterface &gt; <span class="hljs-function">SAL_CALL <span class="hljs-title">BoolDataStoreImpl_createInstance</span><span class="hljs-params">( <span class="hljs-keyword">const</span> Reference&lt; XComponentContext &gt; &amp; rxContext )</span>
-    <span class="hljs-title">throw</span><span class="hljs-params">( Exception )</span>
-</span>{
-    <span class="hljs-keyword">return</span> cppu::acquire(<span class="hljs-keyword">static_cast</span>&lt;cppu::OWeakObject *&gt;(
-                 Singleton::get(rxContext).instance.get()));
-}
-</code></pre>
-<p>We now define the component operation functions that registers our singleton to LO using the helper function we created above.</p>
-<pre><code class="lang-cpp"><span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> SAL_DLLPUBLIC_EXPORT <span class="hljs-keyword">void</span> * <span class="hljs-function">SAL_CALL <span class="hljs-title">component_getFactory</span><span class="hljs-params">(<span class="hljs-keyword">const</span> sal_Char * pImplName, <span class="hljs-keyword">void</span> * <span class="hljs-comment">/*pServiceManager*/</span>, <span class="hljs-keyword">void</span> * pRegistryKey)</span>
-</span>{
-    <span class="hljs-keyword">void</span> * pRet = <span class="hljs-number">0</span>;
-
-    <span class="hljs-keyword">if</span> (rtl_str_compare( pImplName, IMPLEMENTATION_NAME ) == <span class="hljs-number">0</span>)
+    ContextMenuInterceptorImpl()
     {
-        Reference&lt; XSingleComponentFactory &gt; xFactory( createSingleComponentFactory(
-            BoolDataStoreImpl_createInstance,
-            OUString( IMPLEMENTATION_NAME ),
-            BoolDataStoreImpl_getSupportedServiceNames() ) );
-
-        <span class="hljs-keyword">if</span> (xFactory.is())
-        {
-            xFactory-&gt;acquire();
-            pRet = xFactory.get();
-        }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Created ContextMenuInterceptorImpl object : %p\n&quot;</span>, <span class="hljs-keyword">this</span>); fflush(stdout);
     }
 
-    <span class="hljs-keyword">return</span> pRet;
-}
+    <span class="hljs-keyword">virtual</span> ::com::sun::star::ui::<span class="hljs-function">ContextMenuInterceptorAction SAL_CALL <span class="hljs-title">notifyContextMenuExecute</span><span class="hljs-params">(
+    <span class="hljs-keyword">const</span> ::com::sun::star::ui::ContextMenuExecuteEvent&amp; rEvent )</span>
+    <span class="hljs-title">throw</span> <span class="hljs-params">( ::com::sun::star::uno::RuntimeException )</span></span>; 
+};
 
-<span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> <span class="hljs-function">SAL_DLLPUBLIC_EXPORT <span class="hljs-keyword">void</span> SAL_CALL
-<span class="hljs-title">component_getImplementationEnvironment</span><span class="hljs-params">(
-    <span class="hljs-keyword">char</span> <span class="hljs-keyword">const</span> ** ppEnvTypeName, uno_Environment **)</span>
-</span>{
-    *ppEnvTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME;
+
+<span class="hljs-comment">// interceptor.cxx</span>
+
+ContextMenuInterceptorAction SAL_CALL ContextMenuInterceptorImpl::notifyContextMenuExecute(
+    <span class="hljs-keyword">const</span> ContextMenuExecuteEvent&amp; rEvent )
+    <span class="hljs-keyword">throw</span> ( RuntimeException )
+{
+
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Inside notifyContextMenuExecute : this = %p\n&quot;</span>, <span class="hljs-keyword">this</span>); fflush(stdout);
+    <span class="hljs-keyword">try</span> {
+    Reference&lt; XIndexContainer &gt; xContextMenu = rEvent.ActionTriggerContainer;
+    <span class="hljs-keyword">if</span> ( !xContextMenu.is() )
+    {
+        logError(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; notifyContextMenuExecute : bad rEvent.ActionTriggerContainer\n&quot;</span>);
+        <span class="hljs-keyword">return</span> ContextMenuInterceptorAction_IGNORED;
+    }
+    Reference&lt; XMultiServiceFactory &gt; xMenuElementFactory( xContextMenu, UNO_QUERY );
+    <span class="hljs-keyword">if</span> ( !xMenuElementFactory.is() )
+    {
+        logError(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; notifyContextMenuExecute : bad xMenuElementFactory\n&quot;</span>);
+        <span class="hljs-keyword">return</span> ContextMenuInterceptorAction_IGNORED;
+    }
+
+    Reference&lt; XPropertySet &gt; xSeparator( xMenuElementFactory-&gt;createInstance( <span class="hljs-string">&quot;com.sun.star.ui.ActionTriggerSeparator&quot;</span> ), UNO_QUERY );
+    <span class="hljs-keyword">if</span> ( !xSeparator.is() )
+    {
+        logError(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; notifyContextMenuExecute : cannot create xSeparator\n&quot;</span>);
+        <span class="hljs-keyword">return</span> ContextMenuInterceptorAction_IGNORED;
+    }
+
+    xSeparator-&gt;setPropertyValue( <span class="hljs-string">&quot;SeparatorType&quot;</span>, makeAny( ActionTriggerSeparatorType::LINE ) );
+
+    Reference&lt; XPropertySet &gt; xMenuEntry( xMenuElementFactory-&gt;createInstance( <span class="hljs-string">&quot;com.sun.star.ui.ActionTrigger&quot;</span> ), UNO_QUERY );
+    <span class="hljs-keyword">if</span> ( !xMenuEntry.is() )
+    {
+        logError(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; notifyContextMenuExecute : cannot create xMenuEntry\n&quot;</span>);
+        <span class="hljs-keyword">return</span> ContextMenuInterceptorAction_IGNORED;
+    }
+
+    xMenuEntry-&gt;setPropertyValue( <span class="hljs-string">&quot;Text&quot;</span>, makeAny(OUString(<span class="hljs-string">&quot;Increment cell(s)&quot;</span>)));
+    xMenuEntry-&gt;setPropertyValue( <span class="hljs-string">&quot;CommandURL&quot;</span>, makeAny( OUString(<span class="hljs-string">&quot;vnd.sun.star.job:event=onIncrementClick&quot;</span>) ) );
+
+    sal_Int32 nCount = xContextMenu-&gt;getCount();
+    sal_Int32 nIdx = nCount;
+    xContextMenu-&gt;insertByIndex( nIdx++, makeAny( xSeparator ) );
+    xContextMenu-&gt;insertByIndex( nIdx++, makeAny( xMenuEntry ) );
+
+    <span class="hljs-keyword">return</span> ContextMenuInterceptorAction_CONTINUE_MODIFIED;
+    }
+    <span class="hljs-keyword">catch</span> ( Exception&amp; e )
+    {
+    <span class="hljs-built_in">fprintf</span>(stderr, <span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; notifyContextMenuExecute : caught UNO exception: %s\n&quot;</span>,
+        OUStringToOString( e.Message, RTL_TEXTENCODING_ASCII_US ).getStr());
+    fflush(stderr);
+    }
+
+    <span class="hljs-keyword">return</span> ContextMenuInterceptorAction_IGNORED;
 }
 </code></pre>
-<p>We test the single component by using a macro. This gets the singleton using the implicit <code>get()</code> methods of our singleton twice to store to two different variables and checks if changing state in one affects change in other.</p>
-<pre><code class="lang-vbscript"><span class="hljs-keyword">Sub</span> TestSingleton
+<p>The method <code>notifyContextMenuExecute()</code> gets a struct object typed <code>ContextMenuExecuteEvent</code>. This struct contains the following fields :</p>
+<ol>
+<li>ActionTriggerContainer : This is a collection of recursive menu entries. It also acts as a factory for creating new menu entries.</li>
+<li>ExecutePosition : This contains info on the coordinates where context menu will be created.</li>
+<li>SourceWindow : Contains the window where the context menu has been requested.</li>
+<li>Selection : Provides the current selection inside the source window.</li>
+</ol>
+<p>There are two types of menu entries :</p>
+<ol>
+<li>com.sun.star.ui.ActionTrigger : Normal menu entry with actions.</li>
+<li>com.sun.star.ui.ActionTriggerSeparator : A menu entry which is just a separator.</li>
+</ol>
+<p>In the above code we create each of these menu entries using <code>ContextMenuExecuteEvent::ActionTriggerContainer</code>&apos;s <code>XMultiServiceFactory</code> method <code>createInstance()</code>.</p>
+<p><code>com.sun.star.ui.ActionTrigger</code> menu entry has the following properties :</p>
+<ol>
+<li>Text : This is the text label of the menu entry</li>
+<li>CommandURL : This is where we assign the command URL which will be executed if the menu entry is selected by the user. We need to implement a <code>ProtocolHandler</code> or <code>AsyncJob</code> or <code>Job</code> component to handle this URL. In this case we just reuse our <code>AsyncJob</code> component <code>RegisterInterceptorJobImpl</code>. The URL we use here is <code>vnd.sun.star.job:event=onIncrementClick</code></li>
+<li>Image : This property contains an image that is shown left of the menu label. The use is optional so that no image is used if this member is not initialized.</li>
+<li>SubContainer : This property contains an optional sub menu.</li>
+</ol>
+<p><code>com.sun.star.ui.ActionTriggerSeparator</code> menu entry has one optional property : <code>SeparatorType</code> which can take any of the values :</p>
+<ol>
+<li>LINE</li>
+<li>SPACE</li>
+<li>LINEBREAK</li>
+</ol>
+<p>Next after creating these new menu entries we insert them to the <code>ActionTriggerContainer</code> member of <code>ContextMenuExecuteEvent</code> object we received using the method <code>insertByIndex()</code>.</p>
+<p>Finally the method <code>notifyContextMenuExecute()</code> needs to return one of the following possibilities ( of type <code>com.sun.star.ui.ContextMenuInterceptorAction</code> ) :</p>
+<ol>
+<li>IGNORED : This indicates that our interceptor has ignored the call and we don&apos;t want any modifications done to the context menu. The next registered <code>com.sun.star.ui.XContextMenuInterceptor</code> would then be notified.</li>
+<li>CANCELLED : The context menu must not be executed (ie no menu is shown). No remaining interceptor will be called.</li>
+<li>EXECUTE_MODIFIED : We modified the context menu and should be executed without notifying the next registered <code>com.sun.star.ui.XContextMenuInterceptor</code>.</li>
+<li>CONTINUE_MODIFIED : We modified the context menu and next registered interceptor should be notified.</li>
+</ol>
+<p>We want our <code>XContextMenuInterceptor</code> implementation <code>ContextMenuInterceptorImpl</code> to be instantiated only once per LO lifetime. We could do this by making it a singleton, but in this case we make use of C++&apos;s <code>static</code> variable to make it a singleton manually. For this we write a private method <code>getInterceptor</code> in the AsyncJob implementation class. This method accepts the current <code>XFrame</code> object and a reference to an integer that indicates the number of times this method was called for the current <code>XFrame</code> object. This method has a static variable to hold on to uno reference to <code>XContextMenuInterceptor</code> we implemented and makes sure we instantiate it only once.</p>
+<pre><code class="lang-cpp">Reference&lt; XContextMenuInterceptor &gt;&amp; RegisterInterceptorJobImpl::getInterceptor( <span class="hljs-keyword">const</span> Reference&lt;XFrame&gt;&amp; xFrame, sal_Int32&amp; rCalls )
+{
+    <span class="hljs-keyword">static</span> Reference&lt; XContextMenuInterceptor &gt; xInterceptor;
+    <span class="hljs-keyword">static</span> std::<span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-keyword">uintptr_t</span>, sal_Int32&gt;</span> aFrame2Calls;
+    <span class="hljs-keyword">if</span> ( !xInterceptor.is() )
+    xInterceptor = Reference&lt; XContextMenuInterceptor &gt;( (cppu::OWeakObject*) <span class="hljs-keyword">new</span> ContextMenuInterceptorImpl(), UNO_QUERY );
 
-    <span class="hljs-keyword">Dim</span> oServiceInst1
-    <span class="hljs-keyword">Dim</span> oServiceInst2
-    <span class="hljs-keyword">Dim</span> bad as Boolean
-    <span class="hljs-keyword">On</span> <span class="hljs-keyword">Error</span> <span class="hljs-keyword">Goto</span> ErrorHandler
-
-    oServiceInst1 = inco.niocs.test.theBoolDataStore.<span class="hljs-keyword">get</span>( GetDefaultContext() )
-    addr1 = oServiceInst1.getAddress()
-    <span class="hljs-keyword">If</span> oServiceInst1.getBool() <span class="hljs-keyword">Then</span>
-        bad = <span class="hljs-literal">True</span>
-    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
-    oServiceInst1.setBool(<span class="hljs-literal">True</span>)
-    <span class="hljs-keyword">If</span> oServiceInst1.getBool() = <span class="hljs-literal">False</span> <span class="hljs-keyword">Then</span>
-        bad = <span class="hljs-literal">True</span>
-    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
-
-    oServiceInst2 = inco.niocs.test.theBoolDataStore.<span class="hljs-keyword">get</span>( GetDefaultContext() )
-    addr2 = oServiceInst2.getAddress()
-    <span class="hljs-keyword">If</span> oServiceInst2.getBool() = <span class="hljs-literal">False</span> <span class="hljs-keyword">Then</span>
-        bad = <span class="hljs-literal">True</span>
-    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
-    oServiceInst2.setBool(<span class="hljs-literal">False</span>)
-    <span class="hljs-keyword">If</span> oServiceInst1.getBool() = <span class="hljs-literal">True</span> <span class="hljs-keyword">Then</span>
-        bad = <span class="hljs-literal">True</span>
-    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
-
-    <span class="hljs-keyword">If</span> bad <span class="hljs-keyword">Then</span>
-        <span class="hljs-built_in">msgbox</span> <span class="hljs-string">&quot;Bug in singleton component !&quot;</span>
-    <span class="hljs-keyword">Else</span>
-        <span class="hljs-built_in">msgbox</span> <span class="hljs-string">&quot;singleton component works as expected. addr1 = &quot;</span> &amp; addr1 &amp; <span class="hljs-string">&quot; and addr2 = &quot;</span> &amp; addr2
-    <span class="hljs-keyword">End</span> <span class="hljs-keyword">If</span>
-
-    <span class="hljs-keyword">Exit</span> <span class="hljs-keyword">Sub</span>
-
-    ErrorHandler:
-    <span class="hljs-built_in">MsgBox</span> <span class="hljs-string">&quot;Error &quot;</span> &amp; <span class="hljs-built_in">Err</span> &amp; <span class="hljs-string">&quot;: &quot;</span> &amp; <span class="hljs-keyword">Error</span>$ &amp; <span class="hljs-string">&quot; (line : &quot;</span> &amp; Erl &amp; <span class="hljs-string">&quot;)&quot;</span>
-    <span class="hljs-comment">&apos;msgbox &quot;singleton component not installed properly&quot;</span>
-
-<span class="hljs-keyword">End</span> <span class="hljs-keyword">Sub</span>
+    std::<span class="hljs-keyword">uintptr_t</span> nFramePtrVal = <span class="hljs-keyword">reinterpret_cast</span>&lt;std::<span class="hljs-keyword">uintptr_t</span>&gt;( xFrame.get() );
+    <span class="hljs-keyword">auto</span> aItr = aFrame2Calls.find( nFramePtrVal );
+    <span class="hljs-keyword">if</span> ( aItr != aFrame2Calls.end() )
+    rCalls = ++(aItr-&gt;second);
+    <span class="hljs-keyword">else</span>
+    {
+    aFrame2Calls[ nFramePtrVal ] = <span class="hljs-number">1</span>;
+    rCalls = <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">return</span> xInterceptor;
+}
 </code></pre>
+<p>Next we handle the events <code>onEnableInterceptClick1</code> ( event produced by the normal menu entry to enable the context menu ) and <code>onIncrementClick</code> ( event produced by the context menu ) in <code>executeAsync()</code> of our AsyncJob.</p>
+<pre><code class="lang-cpp"><span class="hljs-keyword">if</span> (  aEventName.equalsAscii(<span class="hljs-string">&quot;onEnableInterceptClick1&quot;</span>) )
+{
+    sal_Int32 nNumCalls = <span class="hljs-number">0</span>;
+    Reference&lt; XContextMenuInterceptor &gt; xInterceptor = getInterceptor( xFrame, nNumCalls );
+    <span class="hljs-keyword">if</span> ( nNumCalls &gt; <span class="hljs-number">1</span> )
+    {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Interceptor is already enabled\n&quot;</span>);
+    fflush(stdout);
+    }
+    <span class="hljs-keyword">else</span>
+    {
+        Reference&lt; XController &gt; xController = xFrame-&gt;getController();
+        <span class="hljs-keyword">if</span> ( xController.is() )
+        {
+            Reference&lt; XContextMenuInterception &gt; xContextMenuInterception( xController, UNO_QUERY );
+            <span class="hljs-keyword">if</span> ( xContextMenuInterception.is() )
+            {
+                xContextMenuInterception-&gt;registerContextMenuInterceptor( xInterceptor );
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Registered ContextMenuInterceptorImpl to current frame controller.\n&quot;</span>); fflush(stdout);
+            }
+        }
+    }
+} <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">( aEventName.equalsAscii(&quot;onIncrementClick&quot;)</span> ) </span>{
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; Got request from DISPATCH envType and event name onIncrementClick, going to call IncrementCellValue().\n&quot;</span>); fflush(stdout);
+    IncrementMarkedCellValues( xFrame );
+}
+</code></pre>
+<p><code>IncrementMarkedCellValues()</code> is executed as an action to user selecting our context menu entry. It imcrements all numerical cells by 1 under current selection.</p>
 <h2 id="-a-name-buildsec-a-download-build-and-test-the-extension"><a name="buildsec"></a>Download, build and test the extension</h2>
 <p>The whole project can be downloaded, built and installed by doing :</p>
-<pre><code>$ git clone https://github.com/niocs/SingletonComponent.git
-$ cd SingletonComponent
+<pre><code>$ git clone https://github.com/niocs/CtxtMenuInterceptor.git
+$ cd CtxtMenuInterceptor
 $ make
-$ $LOROOT/instdir/program/unopkg add /home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/SingletonComponent.oxt
+$ $LOROOT/instdir/program/unopkg add /home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/CtxtMenuInterceptor.oxt
 </code></pre><p>To remove the extension, do :</p>
-<pre><code>$ $LOROOT/instdir/program/unopkg remove SingletonComponent.oxt
-</code></pre><p>To test this component we need to enable macros in Calc. Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc now.
-Open calc and load the document <code>TestSingleton.ods</code> and click on the button in the sheet &quot;Push button&quot;, if everything went well you should see a message box with text <code>singleton component works as expected. addr1 = &lt;number1&gt; and addr2 = &lt;number2&gt;</code>, where <code>number1</code> and <code>number2</code> must be same the number.</p>
-<h2 id="-a-name-prebuilt-a-test-the-prebuilt-extension"><a name="prebuilt"></a>Test the prebuilt extension</h2>
+<pre><code>$ $LOROOT/instdir/program/unopkg remove CtxtMenuInterceptor.oxt
+</code></pre><p>Click on the menu <code>Add-On example &gt; Enable context menu</code>. Now you should see something like below in the terminal.</p>
+<pre><code>DEBUG&gt;&gt;&gt; Created RegisterInterceptorJobImpl object : 0x7ff86e8382e8
+DEBUG&gt;&gt;&gt; Called executeAsync() : this = 0x7ff86e8382e8
+DEBUG&gt;&gt;&gt; xFrame = 0x7ff88134ec78
+DEBUG&gt;&gt;&gt; Created ContextMenuInterceptorImpl object : 0x7ff86e831c10
+DEBUG&gt;&gt;&gt; Registered ContextMenuInterceptorImpl to current frame controller.
+</code></pre><p>If you click again on the same menu, you should see the following in terminal indicating that the object <code>ContextMenuInterceptorImpl</code> is instantiated only once.</p>
+<pre><code>DEBUG&gt;&gt;&gt; Created RegisterInterceptorJobImpl object : 0x7ff86e8383d8
+DEBUG&gt;&gt;&gt; Called executeAsync() : this = 0x7ff86e8383d8
+DEBUG&gt;&gt;&gt; xFrame = 0x7ff88134ec78
+DEBUG&gt;&gt;&gt; Interceptor is already enabled
+</code></pre><p>Now populate few cells with <strong>numbers</strong> and place cursor on them or select them and right click. You should see the menu entry <code>Increment cell(s)</code> and a menu-separator just above that. When you click it the cells you selected with numbers should increment by 1. The following would be displayed in terminal on doing that :</p>
+<pre><code>DEBUG&gt;&gt;&gt; Inside notifyContextMenuExecute : this = 0x7ff86e831c10
+DEBUG&gt;&gt;&gt; Created RegisterInterceptorJobImpl object : 0x7ff880089570
+DEBUG&gt;&gt;&gt; Called executeAsync() : this = 0x7ff880089570
+DEBUG&gt;&gt;&gt; xFrame = 0x7ff88134ec78
+DEBUG&gt;&gt;&gt; Got request from DISPATCH envType and event name onIncrementClick, going to call IncrementCellValue().
+</code></pre><p>If you clicked <code>Increment cell(s)</code> context menu with non-numeric data in current/selected cell(s), then those cells will not be modified. The terminal would say something like :</p>
+<pre><code>DEBUG&gt;&gt;&gt; Got request from DISPATCH envType and event name onIncrementClick, going to call IncrementCellValue().
+DEBUG&gt;&gt;&gt; IncrementCellRange : cell type is not numeric, skipping.
+</code></pre><h2 id="-a-name-prebuilt-a-test-the-prebuilt-extension"><a name="prebuilt"></a>Test the prebuilt extension</h2>
 <p>Download the extension as :</p>
-<pre><code>$ git clone https://github.com/niocs/SingletonComponent.git
-$ cd SingletonComponent
-</code></pre><p>In <code>SingletonComponent</code> directory you will see a file called <code>SingletonComponent.oxt</code>. This is the prebuilt extension. Install this extension using</p>
-<pre><code>$ unopkg add /path/to/SingletonComponent.oxt
+<pre><code>$ git clone https://github.com/niocs/CtxtMenuInterceptor.git
+$ cd CtxtMenuInterceptor
+</code></pre><p>In <code>CtxtMenuInterceptor</code> directory you will see a file called <code>CtxtMenuInterceptor.oxt</code>. This is the prebuilt extension. Install this extension using</p>
+<pre><code>$ unopkg add /path/to/CtxtMenuInterceptor.oxt
 </code></pre><p>To remove this extension do :</p>
-<pre><code>$ unopkg remove SingletonComponent.oxt
-</code></pre><p>To test this component we need to enable macros in Calc. Go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc now.
-Open calc and load the document <code>TestSingleton.ods</code> and click on the button in the sheet &quot;Push button&quot;, if everything went well you should see a message box with text <code>singleton component works as expected. addr1 = &lt;number1&gt; and addr2 = &lt;number2&gt;</code>, where <code>number1</code> and <code>number2</code> must be the same number.</p>
+<pre><code>$ unopkg remove CtxtMenuInterceptor.oxt
+</code></pre><p>Open calc and click on the menu <code>Add-On example &gt; Enable context menu</code>. This should enable our context menu entry from now on. Now populate few cells with <strong>numbers</strong> and place cursor on them or select them and right click. You should see the menu entry <code>Increment cell(s)</code> and a menu-separator just above that. When you click it, the cells you selected with numbers should increment by 1.</p>
 
                     
                     </section>
@@ -816,10 +802,8 @@ Open calc and load the document <code>TestSingleton.ods</code> and click on the 
         </div>
 
         
-        <a href="../extensions/part7.html" class="navigation navigation-prev " aria-label="Previous page: Part7 AsyncJob extension"><i class="fa fa-angle-left"></i></a>
+        <a href="../extensions/part8.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Part8 SingletonComponent"><i class="fa fa-angle-left"></i></a>
         
-        
-        <a href="../extensions/part9.html" class="navigation navigation-next " aria-label="Next page: Part9 ContextMenu"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
