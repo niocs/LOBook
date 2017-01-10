@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>PreFAQ | Libreoffice Blog</title>
+        <title>Part10 SP500Addin | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,8 @@
         
     
     
-    <link rel="next" href="../extensions/part1.html" />
     
-    
-    <link rel="prev" href="../extensions/index.html" />
+    <link rel="prev" href="../extensions/part9.html" />
     
 
         
@@ -36,7 +34,7 @@
     
 
         
-    <div class="book" data-level="4.1" data-basepath=".." data-revision="Tue Jan 10 2017 12:10:57 GMT+0530 (IST)">
+    <div class="book" data-level="4.11" data-basepath=".." data-revision="Tue Jan 10 2017 12:10:57 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -325,7 +323,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="4.1" data-path="extensions/prefaq.html">
+        <li class="chapter " data-level="4.1" data-path="extensions/prefaq.html">
             
                 
                     <a href="../extensions/prefaq.html">
@@ -475,7 +473,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.11" data-path="extensions/part10.html">
+        <li class="chapter active" data-level="4.11" data-path="extensions/part10.html">
             
                 
                     <a href="../extensions/part10.html">
@@ -598,18 +596,224 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="this-part-has-some-q-a-so-that-readers-understand-some-basics">This part has some Q&amp;A so that readers understand some basics.</h1>
+                        <h1 id="libreoffice-extension-development-with-c-part-10-creating-a-calc-addin-formula">Libreoffice extension development with C++ - Part 10 - Creating a Calc addin(formula).</h1>
+<h3 id="audience-selection">Audience selection</h3>
 <ol>
-<li><p>Can there be multple soffice processes per user per host ?</p>
-<p> Answer : There can only be one soffice process per user per host, if one soffice process is running and you try to open a document with another soffice command via terminal, this request will be transfered to the already running soffice process and the document will be opened in a new window of the same process. However while an instance of soffice gui instance any number of <code>headless</code> soffice commands can be run. This is probably because the headless processes need only readonly access to source files and cfg.</p>
-</li>
-<li><p>Can there be extensions installed just for a particular document or can there be any correspondence between extensions and the documents open by soffice ?</p>
-<p>Answer : An installed extension is common to all documents opened by soffice, there is no concept of per document extension. The extension should be prepared to handle the presence of multiple documents/ or calls from them.</p>
-</li>
-<li><p>Is there any easy method to see the states of calc process while running without using gdb ?</p>
-<p>Answer : As far as we know there is no such way other than using gdb.</p>
-</li>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can jump directly to <strong><a href="#prebuilt">Test the prebuilt extension</a></strong></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <strong><a href="#buildsec">Download, build and test the extension</a></strong></li>
 </ol>
+<hr>
+<p>LO Extensions can be used to add custom functions/formulas to Calc, such an extension is called an Addin. In this part we add couple of custom functions <code>getticker</code> and <code>getcompname</code>.
+<code>getticker</code> functions takes an index <code>i</code> ranging from 0 to 506 (the upper limit may vary) and returns the ith ticker of <code>S&amp;P500</code> index. <code>getcompname</code> takes an <code>S&amp;P500</code> ticker as input and returns its company name.
+For building such an extension we need to create a service implementation that implements <code>com.sun.star.sheet.AddIn</code> service and our own custom service that supports a custom interface that supports the functions <code>getticker</code> and <code>getcompname</code>. <code>com.sun.star.sheet.AddIn</code> supports the interface <code>com.sun.star.sheet.XAddIn</code> that has the following definition</p>
+<pre><code>published interface XAddIn: com::sun::star::lang::XLocalizable
+{
+
+   string getProgrammaticFuntionName( [in] string aDisplayName );
+   string getDisplayFunctionName( [in] string aProgrammaticName );
+   string getFunctionDescription( [in] string aProgrammaticName );
+   string getDisplayArgumentName(
+          [in] string aProgrammaticFunctionName,
+          [in] long nArgument );
+
+  string getArgumentDescription(
+         [in] string aProgrammaticFunctionName,
+         [in] long nArgument );
+
+  string getProgrammaticCategoryName( [in] string aProgrammaticFunctionName );
+  string getDisplayCategoryName( [in] string aProgrammaticFunctionName );
+
+};
+</code></pre><p>The methods of <code>XAddIn</code> interface are very self descriptive. The display name of a function is the name of the function as visible in Calc. Programmatic function name is the name as defined by our custom interface. <code>XAddIn</code> inherits from <code>com::sun::star::lang::XLocalizable</code> which has the following methods :</p>
+<pre><code>published interface XLocalizable: com::sun::star::uno::XInterface
+{
+   void setLocale( [in] Locale eLocale );
+   Locale getLocale();
+};
+</code></pre><p>We now define our custom interface <code>com::sun::star::sheet::addin::XSP500Addin</code> and service <code>SP500Addin</code> as follows:</p>
+<pre><code>#ifndef __com_sun_star_sheet_addin_xsp500addin_idl__
+#define __com_sun_star_sheet_addin_xsp500addin_idl__
+
+#include &lt;com/sun/star/uno/XInterface.idl&gt;
+
+module com { module sun { module star { module sheet { module addin {
+                interface XSP500Addin : com::sun::star::uno::XInterface
+                {
+                    string getTicker( [in] long nIdx );
+                    string getName( [in] string aTicker );
+                };
+
+                service SP500Addin : XSP500Addin;
+
+}; }; }; }; };
+</code></pre><p>Next we define our service implementation <code>SP500AddinImpl</code> in <code>SP500.hxx</code> as usual and implement the required methods of <code>XAddIn</code>, <code>XSP500Addin</code>, <code>XLocalizable</code>, <code>XServiceInfo</code> in <code>SP500.cxx</code>:</p>
+<pre><code class="lang-cpp"><span class="hljs-comment">// Include the data header file where the array of tickers and name maps are stored.</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> &quot;data.hxx&quot;</span>
+
+<span class="hljs-keyword">const</span> OUString SP500AddinImpl::aFunctionNames[NUMFUNCTIONS] = {
+    <span class="hljs-string">&quot;getTicker&quot;</span>,
+    <span class="hljs-string">&quot;getName&quot;</span>
+};
+
+<span class="hljs-keyword">const</span> OUString SP500AddinImpl::aDisplayFunctionNames[NUMFUNCTIONS] = {
+    <span class="hljs-string">&quot;getticker&quot;</span>,
+    <span class="hljs-string">&quot;getcompname&quot;</span>
+};
+
+<span class="hljs-keyword">const</span> OUString SP500AddinImpl::aDescriptions[NUMFUNCTIONS] = {
+    <span class="hljs-string">&quot;Gets SP500 ticker of given index&quot;</span>,
+    <span class="hljs-string">&quot;Gets company name of given ticker&quot;</span>
+};
+
+<span class="hljs-keyword">const</span> OUString SP500AddinImpl::aFirstArgumentNames[NUMFUNCTIONS] = {
+    <span class="hljs-string">&quot;Index&quot;</span>,
+    <span class="hljs-string">&quot;Ticker&quot;</span>
+};
+
+<span class="hljs-keyword">const</span> OUString SP500AddinImpl::aFirstArgumentDescriptions[NUMFUNCTIONS] = {
+    <span class="hljs-string">&quot;Index of SP500 ticker to be returned&quot;</span>,
+    <span class="hljs-string">&quot;Ticker whose company name is to be returned&quot;</span>
+};
+
+sal_Int32 SP500AddinImpl::getFunctionID( <span class="hljs-keyword">const</span> OUString aProgrammaticFunctionName ) <span class="hljs-keyword">const</span>
+{
+    <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumFunctions; ++nIdx )
+        <span class="hljs-keyword">if</span> ( aProgrammaticFunctionName == aFunctionNames[nIdx] )
+            <span class="hljs-keyword">return</span> nIdx;
+    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+}
+
+OUString SP500AddinImpl::getTicker( sal_Int32 nIdx )
+{
+    <span class="hljs-keyword">if</span> ( nIdx &lt; <span class="hljs-number">0</span> || nIdx &gt;= aTickers.size())
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Bad Index&quot;</span>;
+    <span class="hljs-keyword">return</span> aTickers[nIdx];
+}
+
+OUString SP500AddinImpl::getName( <span class="hljs-keyword">const</span> OUString&amp; aTicker )
+{
+    <span class="hljs-keyword">auto</span> it = aTickerToName.find(aTicker);
+    <span class="hljs-keyword">if</span> ( it == aTickerToName.end() )
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Bad Ticker&quot;</span>;
+    <span class="hljs-keyword">return</span> it-&gt;second;
+}
+
+
+OUString SP500AddinImpl::getProgrammaticFuntionName( <span class="hljs-keyword">const</span> OUString&amp; aDisplayName )
+{
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG &gt;&gt;&gt; getProgrammaticFuntionName(%s)\n&quot;</span>, OUStringToOString( aDisplayName, RTL_TEXTENCODING_ASCII_US ).getStr()); fflush(stdout);
+    <span class="hljs-keyword">for</span> ( sal_Int32 nIdx = <span class="hljs-number">0</span>; nIdx &lt; nNumFunctions; ++nIdx )
+        <span class="hljs-keyword">if</span> ( aDisplayName == aDisplayFunctionNames[nIdx] )
+            <span class="hljs-keyword">return</span> aFunctionNames[nIdx];
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>;
+}
+
+OUString SP500AddinImpl::getDisplayFunctionName( <span class="hljs-keyword">const</span> OUString&amp; aProgrammaticName )
+{
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG &gt;&gt;&gt; getDisplayFunctionName(%s)\n&quot;</span>, OUStringToOString( aProgrammaticName, RTL_TEXTENCODING_ASCII_US ).getStr()); fflush(stdout);
+    sal_Int32 nFIdx = getFunctionID( aProgrammaticName );
+    <span class="hljs-keyword">return</span> ( nFIdx == -<span class="hljs-number">1</span> ) ? <span class="hljs-string">&quot;&quot;</span> : aDisplayFunctionNames[nFIdx];
+}
+
+OUString SP500AddinImpl::getFunctionDescription( <span class="hljs-keyword">const</span> OUString&amp; aProgrammaticName )
+{
+    sal_Int32 nFIdx = getFunctionID( aProgrammaticName );
+    <span class="hljs-keyword">return</span> ( nFIdx == -<span class="hljs-number">1</span> ) ? <span class="hljs-string">&quot;&quot;</span> : aDescriptions[nFIdx];
+}
+
+OUString SP500AddinImpl::getDisplayArgumentName( <span class="hljs-keyword">const</span> OUString&amp; aProgrammaticFunctionName, sal_Int32 nArgument )
+{
+    sal_Int32 nFIdx = getFunctionID( aProgrammaticFunctionName );
+    <span class="hljs-keyword">return</span> ( nFIdx == -<span class="hljs-number">1</span> || nArgument != <span class="hljs-number">0</span> ) ? <span class="hljs-string">&quot;&quot;</span> : aFirstArgumentNames[nFIdx];
+}
+
+OUString SP500AddinImpl::getArgumentDescription( <span class="hljs-keyword">const</span> OUString&amp; aProgrammaticFunctionName, sal_Int32 nArgument )
+{
+    sal_Int32 nFIdx = getFunctionID( aProgrammaticFunctionName );
+    <span class="hljs-keyword">return</span> ( nFIdx == -<span class="hljs-number">1</span> || nArgument != <span class="hljs-number">0</span> ) ? <span class="hljs-string">&quot;&quot;</span> : aFirstArgumentDescriptions[nFIdx];
+}
+
+OUString SP500AddinImpl::getProgrammaticCategoryName( <span class="hljs-keyword">const</span> OUString&amp; aProgrammaticFunctionName )
+{
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; inside getProgrammaticCategoryName()\n&quot;</span>);fflush(stdout);
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Add-In&quot;</span>;
+}
+
+OUString SP500AddinImpl::getDisplayCategoryName( <span class="hljs-keyword">const</span> OUString&amp; aProgrammaticFunctionName )
+{
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG&gt;&gt;&gt; inside getDisplayCategoryName()\n&quot;</span>);fflush(stdout);
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Add-In&quot;</span>;
+}
+</code></pre>
+<p>We use a golang script <code>getsp500.go</code> (provided in the source repository) to fetch and parse the <code>S&amp;P500</code> wikipedia page <code>https://en.wikipedia.org/wiki/List_of_S%26P_500_companies</code> and generate the c++ header file <code>data.hxx</code> which we include in <code>SP500.cxx</code>
+<code>data.hxx</code> contains the following two globals <code>aTickers</code> and <code>aTickerToName</code> which we use in implementing <code>XSP500Addin</code> functions:</p>
+<pre><code class="lang-cpp"><span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> &lt;map&gt;</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> &lt;vector&gt;</span>
+<span class="hljs-preprocessor">#<span class="hljs-keyword">include</span> &lt;rtl/ustring.hxx&gt;</span>
+
+<span class="hljs-keyword">using</span> rtl::OUString;
+
+
+std::<span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;OUString&gt;</span> aTickers = {
+    <span class="hljs-string">&quot;A&quot;</span>,
+    <span class="hljs-string">&quot;AAL&quot;</span>,
+    <span class="hljs-string">&quot;AAP&quot;</span>,
+    <span class="hljs-string">&quot;AAPL&quot;</span>,
+    <span class="hljs-string">&quot;ABBV&quot;</span>,
+    <span class="hljs-string">&quot;ABC&quot;</span>,
+    <span class="hljs-string">&quot;ABT&quot;</span>,
+    <span class="hljs-string">&quot;ACN&quot;</span>,
+    <span class="hljs-string">&quot;ADBE&quot;</span>,
+    ...
+    ...
+    <span class="hljs-string">&quot;YHOO&quot;</span>,
+    <span class="hljs-string">&quot;YUM&quot;</span>,
+    <span class="hljs-string">&quot;ZBH&quot;</span>,
+    <span class="hljs-string">&quot;ZION&quot;</span>,
+    <span class="hljs-string">&quot;ZTS&quot;</span>
+};
+
+std::<span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;OUString, OUString&gt;</span> aTickerToName = {
+    {<span class="hljs-string">&quot;A&quot;</span>, <span class="hljs-string">&quot;Agilent Technologies Inc&quot;</span>},
+    {<span class="hljs-string">&quot;AAL&quot;</span>, <span class="hljs-string">&quot;American Airlines Group&quot;</span>},
+    {<span class="hljs-string">&quot;AAP&quot;</span>, <span class="hljs-string">&quot;Advance Auto Parts&quot;</span>},
+    {<span class="hljs-string">&quot;AAPL&quot;</span>, <span class="hljs-string">&quot;Apple Inc.&quot;</span>},
+    {<span class="hljs-string">&quot;ABBV&quot;</span>, <span class="hljs-string">&quot;AbbVie&quot;</span>},
+    {<span class="hljs-string">&quot;ABC&quot;</span>, <span class="hljs-string">&quot;AmerisourceBergen Corp&quot;</span>},
+    {<span class="hljs-string">&quot;ABT&quot;</span>, <span class="hljs-string">&quot;Abbott Laboratories&quot;</span>},
+    {<span class="hljs-string">&quot;ACN&quot;</span>, <span class="hljs-string">&quot;Accenture plc&quot;</span>},
+    {<span class="hljs-string">&quot;ADBE&quot;</span>, <span class="hljs-string">&quot;Adobe Systems Inc&quot;</span>},
+    {<span class="hljs-string">&quot;ADI&quot;</span>, <span class="hljs-string">&quot;Analog Devices, Inc.&quot;</span>},
+    {<span class="hljs-string">&quot;ADM&quot;</span>, <span class="hljs-string">&quot;Archer-Daniels-Midland Co&quot;</span>},
+    ...
+    ...
+    {<span class="hljs-string">&quot;YHOO&quot;</span>, <span class="hljs-string">&quot;Yahoo Inc.&quot;</span>},
+    {<span class="hljs-string">&quot;YUM&quot;</span>, <span class="hljs-string">&quot;Yum! Brands Inc&quot;</span>},
+    {<span class="hljs-string">&quot;ZBH&quot;</span>, <span class="hljs-string">&quot;Zimmer Biomet Holdings&quot;</span>},
+    {<span class="hljs-string">&quot;ZION&quot;</span>, <span class="hljs-string">&quot;Zions Bancorp&quot;</span>},
+    {<span class="hljs-string">&quot;ZTS&quot;</span>, <span class="hljs-string">&quot;Zoetis&quot;</span>}
+};
+</code></pre>
+<h2 id="-a-name-buildsec-a-download-build-and-test-the-extension"><a name="buildsec"></a>Download, build and test the extension</h2>
+<p>The whole project can be downloaded, built and installed by doing :</p>
+<pre><code>$ git clone https://github.com/niocs/SP500Addin.git
+$ cd SP500Addin
+$ make
+$ $LOROOT/instdir/program/unopkg add /home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/SP500Addin.oxt
+</code></pre><p>To remove the extension, do :</p>
+<pre><code>$ $LOROOT/instdir/program/unopkg remove SP500Addin.oxt
+</code></pre><p>To test <code>getTicker()</code> formula, go to any cell and type <code>=GETTICKER(210)</code> and hit enter, it should now show the string <code>GT</code> which is the 211th ticker in <code>S&amp;P500</code> index sorted alphabetically. If you give an invalid index input, then it should produce the string <code>Bad Index</code> as output.
+Similarly to test <code>getCompname()</code> go to any cell and type <code>=GETCOMPNAME(&quot;GT&quot;)</code> and it should produce the output <code>Goodyear Tire &amp; Rubber</code> which is the company name of the ticker <code>GT</code>. If you provide any invalid <code>S&amp;P500</code> ticker as input then it should produce <code>Bad Ticker</code> as output.</p>
+<h2 id="-a-name-prebuilt-a-test-the-prebuilt-extension"><a name="prebuilt"></a>Test the prebuilt extension</h2>
+<p>Download the extension as :</p>
+<pre><code>$ git clone https://github.com/niocs/SP500Addin.git
+$ cd SP500Addin
+</code></pre><p>In <code>SP500Addin</code> directory you will see a file called <code>SP500Addin.oxt</code>. This is the prebuilt extension. Install this extension using</p>
+<pre><code>$ unopkg add /path/to/SP500Addin.oxt
+</code></pre><p>To remove this extension do :</p>
+<pre><code>$ unopkg remove SP500Addin.oxt
+</code></pre><p>To test <code>getTicker()</code> formula, go to any cell and type <code>=GETTICKER(210)</code> and hit enter, it should now show the string <code>GT</code> which is the 211th ticker in <code>S&amp;P500</code> index sorted alphabetically. If you give an invalid index input, then it should produce the string <code>Bad Index</code> as output.
+Similarly to test <code>getCompname()</code> go to any cell and type <code>=GETCOMPNAME(&quot;GT&quot;)</code> and it should produce the output <code>Goodyear Tire &amp; Rubber</code> which is the company name of the ticker <code>GT</code>. If you provide any invalid <code>S&amp;P500</code> ticker as input then it should produce <code>Bad Ticker</code> as output.</p>
 
                     
                     </section>
@@ -620,10 +824,8 @@
         </div>
 
         
-        <a href="../extensions/index.html" class="navigation navigation-prev " aria-label="Previous page: LibreOffice extensions"><i class="fa fa-angle-left"></i></a>
+        <a href="../extensions/part9.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Part9 ContextMenu"><i class="fa fa-angle-left"></i></a>
         
-        
-        <a href="../extensions/part1.html" class="navigation navigation-next " aria-label="Next page: Part1 UNO Intro"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
