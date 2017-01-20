@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>ui | Libreoffice Blog</title>
+        <title>Part11 StockStreamer | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,8 @@
         
     
     
-    <link rel="next" href="../calcarch/filter.html" />
     
-    
-    <link rel="prev" href="../calcarch/core.html" />
+    <link rel="prev" href="../extensions/part10.html" />
     
 
         
@@ -36,7 +34,7 @@
     
 
         
-    <div class="book" data-level="2.3" data-basepath=".." data-revision="Fri Jan 20 2017 14:22:49 GMT+0530 (IST)">
+    <div class="book" data-level="4.12" data-basepath=".." data-revision="Fri Jan 20 2017 14:22:49 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -148,7 +146,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.3" data-path="calcarch/ui.html">
+        <li class="chapter " data-level="2.3" data-path="calcarch/ui.html">
             
                 
                     <a href="../calcarch/ui.html">
@@ -490,7 +488,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.12" data-path="extensions/part11.html">
+        <li class="chapter active" data-level="4.12" data-path="extensions/part11.html">
             
                 
                     <a href="../extensions/part11.html">
@@ -613,7 +611,80 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="ui">ui</h1>
+                        <h1 id="libreoffice-extension-development-with-c-part-10-creating-a-real-time-stock-market-data-client-extension">Libreoffice extension development with C++ - Part 10 - Creating a real-time stock market data client extension.</h1>
+<h3 id="audience-selection">Audience selection</h3>
+<ol>
+<li>Audience type <strong><a href="index.html">AUD-C</a></strong> can jump directly to <strong><a href="#prebuilt">Test the prebuilt extension</a></strong></li>
+<li>Audience type <strong><a href="index.html">AUD-B</a></strong> can jump directly to <strong><a href="#buildsec">Download, build and test the extension</a></strong></li>
+</ol>
+<hr>
+<p>In this part we build an applicable extension using the techniques we learnt from previous parts. We build a stock market data client that maintains a TCP connections to a server(that we write). The client requests data updates for a particular ticker from a <em>particular timestamp</em> onwards via a JSON message. The server replies with another JSON message containing simulated data for the ticker from the requested timestamp till now. The extension(client) will now parse this JSON message and puts the data in its own buffer and updates a spreadsheet with the data. The client maintains this TCP connection to poll the server periodically.</p>
+<p>We first discuss the high level design before going into details. Following is a sample JSON request message made by the client.</p>
+<pre><code class="lang-json">{
+        <span class="hljs-string">&quot;Ticker&quot;</span>  :  <span class="hljs-string">&quot;AAPL&quot;</span>,
+        <span class="hljs-string">&quot;From&quot;</span>    :  <span class="hljs-number">1257894000</span>
+}
+</code></pre>
+<p>where the <code>From</code>&apos;s value is the timestamp from which we want the stock data, expressed as the number of seconds elapsed since January 1, 1970 UTC. The server reponse will look like :</p>
+<pre><code class="lang-json">{
+        <span class="hljs-string">&quot;Tstamp&quot;</span>  : [ <span class="hljs-number">1257894001</span>, <span class="hljs-number">1257894002</span>, <span class="hljs-number">1257894003</span> ],
+        <span class="hljs-string">&quot;Price&quot;</span>   : [ <span class="hljs-number">100.23</span>, <span class="hljs-number">100.52</span>, <span class="hljs-number">100.12</span> ],
+        <span class="hljs-string">&quot;Volume&quot;</span>  : [ <span class="hljs-number">2340023</span>, <span class="hljs-number">2343042</span>, <span class="hljs-number">2347891</span> ]
+}
+</code></pre>
+<p>Note that there are three arrays in the response json. All arrays will have the same length, here there are three data points. <code>Tstamp</code> array specifies the timestamps of each data point. <code>Price</code> array gives the price at each point in time and <code>Volume</code> gives the instantaneous volumes.</p>
+<p>Next we describe the server-client system with a block diagram showing its components.</p>
+<p><img src="stockstreamer.png" alt="Stock streamer block diagram"></p>
+<p>The extension is made of a singleton component that implements the class <code>StockClient</code> which supports the interface <code>XStockClient</code>. The definition of <code>XStockClient</code> is as follows :</p>
+<pre><code>// SimpleStockClient.idl
+#ifndef __inco_niocs_test_stockclient_idl__
+#define __inco_niocs_test_stockclient_idl__
+
+#include &lt;com/sun/star/lang/IllegalArgumentException.idl&gt;
+#include &lt;com/sun/star/sheet/XSpreadsheet.idl&gt;
+
+module inco { module niocs { module test {
+
+    interface XStockClient
+    {
+        void setEnableUpdates( [in] boolean bSet );
+        void setSheet( [in] ::com::sun::star::sheet::XSpreadsheet rxSheet );
+    };
+
+    singleton theStockClient : XStockClient;
+    service StockClient : XStockClient;
+
+}; }; };
+
+#endif
+</code></pre><p><code>setEnableUpdates()</code> takes a boolean flag to enable/disable updates of data from the server. <code>setSheet()</code> methods lets the user of the extension (possibly a macro as in this case) supply the sheet where the updates of data are to be written. On construction of the singleton, it spawns a worker thread (built on top of LO api&apos;s <code>salhelper::Thread</code>) that does all the work of connecting to the server and polling the server for data updates. The worker thread has a TCP client object using LO&apos;s api class <code>osl::ConnectorSocket</code>, which makes a long running connection to the address <code>localhost:1239</code> where the server is supposed to be listening. The data received during each poll is pushed into ring buffers implemented inside the class <code>StockRingBuffer</code> which consists of arrays for holding the <code>Tstamp</code>, <code>Price</code> and <code>Volume</code> components of the streamed data. The arrays have a fixed length and keeps overwriting over the oldest entries when run out of space. So it keeps track of the latest N entries of prices, timestamps and volume timeseries it receives from the server. After receiving each data update, the extension updates the sheet it has been provided by the macro to write out the latest N entries of the timeseries it has been recording. The value of N is fixed at 100. For parsing JSON message we use <a href="https://www.gitbook.com/book/miloyip/rapidjson/details" target="_blank">rapidjson</a> C++ header only library. The files involved in the implementation of the extension are <code>stockclient.hxx</code> and <code>stockclient.cxx</code>. The server is implemented in golang in <code>stockserver.go</code></p>
+<h2 id="-a-name-buildsec-a-download-build-and-test-the-extension"><a name="buildsec"></a>Download, build and test the extension</h2>
+<p>The server is written in golang, so you would need a standard golang compiler to build the server from source code. See <a href="https://golang.org/doc/install" target="_blank">Install Golang</a>.
+If you do not want to build the server from source, we have provided a binary version of the same called <code>stockserver</code>.</p>
+<p>The whole project can be downloaded, built and installed by doing :</p>
+<pre><code>$ sudo dnf install rapidjson-devel
+$ git clone https://github.com/niocs/StockStreamer.git
+$ cd StockStreamer
+$ make
+$ $LOROOT/instdir/program/unopkg add /home/$username/libreoffice5.3_sdk/LINUXexample.out/bin/SimpleStockClient.oxt
+$ go build stockserver.go
+</code></pre><p>To remove the extension, do :</p>
+<pre><code>$ $LOROOT/instdir/program/unopkg remove SimpleStockClient.oxt
+</code></pre><p>Now we need to allow macros in Calc if you have not already. Open Calc and go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc. This is a one time process. To test the extension, open the file <code>StockClient.ods</code>, and it may prompt for enabling Macros, and you should enable macros. Now run the server in a separate terminal as :</p>
+<pre><code>$ cd StockStreamer
+$ ./stockserver
+</code></pre><p>Go back to the opened file in LO, and you should see three buttons on Sheet1 : <code>Init</code>, <code>Enable Updates</code>, <code>Disable Updates</code>. Click on <strong>Init</strong> button first, before clicking on anything else (otherwise the behaviour will be undefined). Then click on <strong>Enable Updates</strong>, wait for few minutes, and you should see the cell ranges A8-A107, B8-B107 and C8-C107 fill up and get updated every couple of seconds. You should also see the charts for Prices and Volume gets updated as time goes on. Clicking on <strong>Disable Updates</strong> will stop the updates but the client will still stay connected to the server. Clicking on <strong>Enable Updates</strong> will start the updates again and so on.</p>
+<h2 id="-a-name-prebuilt-a-test-the-prebuilt-extension"><a name="prebuilt"></a>Test the prebuilt extension</h2>
+<p>Download the extension as :</p>
+<pre><code>$ git clone https://github.com/niocs/StockStreamer.git
+$ cd StockStreamer
+</code></pre><p>In <code>StockStreamer</code> directory you will see a file called <code>SimpleStockClient.oxt</code>. This is the prebuilt extension. Install this extension using</p>
+<pre><code>$ unopkg add /path/to/SimpleStockClient.oxt
+</code></pre><p>To remove this extension do :</p>
+<pre><code>$ unopkg remove SimpleStockClient.oxt
+</code></pre><p>Now we need to allow macros in Calc if you have not already. Open Calc and go to Tools &gt; Options &gt; Security &gt; Click &quot;Macro Security&quot; &gt; Select the radio button &quot;Medium - Confirmation required before executing macros from untrusted source&quot;. Restart Calc. This is a one time process. To test the extension, open the file <code>StockClient.ods</code>, and it may prompt for enabling Macros, and you should enable macros. Now run the server in a separate terminal as :</p>
+<pre><code>$ ./stockserver
+</code></pre><p>Go back to the opened file in LO, and you should see three buttons on Sheet1 : <code>Init</code>, <code>Enable Updates</code>, <code>Disable Updates</code>. Click on <strong>Init</strong> button first, before clicking on anything else (otherwise the behaviour will be undefined). Then click on <strong>Enable Updates</strong>, wait for few minutes, and you should see the cell ranges A8-A107, B8-B107 and C8-C107 fill up and get updated every couple of seconds. You should also see the charts for Prices and Volume gets updated as time goes on. Clicking on <strong>Disable Updates</strong> will stop the updates but the client will still stay connected to the server. Clicking on <strong>Enable Updates</strong> will start the updates again and so on.</p>
 
                     
                     </section>
@@ -624,10 +695,8 @@
         </div>
 
         
-        <a href="../calcarch/core.html" class="navigation navigation-prev " aria-label="Previous page: core"><i class="fa fa-angle-left"></i></a>
+        <a href="../extensions/part10.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Part10 SP500Addin"><i class="fa fa-angle-left"></i></a>
         
-        
-        <a href="../calcarch/filter.html" class="navigation navigation-next " aria-label="Next page: filter"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
