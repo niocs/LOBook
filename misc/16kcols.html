@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="3.8" data-basepath=".." data-revision="Wed Feb 01 2017 13:25:40 GMT+0530 (IST)">
+    <div class="book" data-level="3.8" data-basepath=".." data-revision="Wed Feb 01 2017 16:55:25 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -631,10 +631,48 @@
                         <h1 id="project-increasing-the-limit-of-number-of-columns-from-1024-to-16384-in-calc">Project : Increasing the limit of number of columns from 1024 to 16384 in Calc</h1>
 <h2 id="motivation">Motivation</h2>
 <p>Often we need the ability to load sheets from MS Excel/csv files that have more than 1024 columns in it. MS Excel can effortlessly open such large column files, but in Calc we are limited to loading files with 1024 columns.</p>
-<h2 id="challenges">Challenges</h2>
 <h2 id="basics-on-the-related-code">Basics on the related code</h2>
+<p>The very basic classes involved are :</p>
+<ol>
+<li><code>ScDocument</code> - which represents a document. See its declaration <a href="http://opengrok.libreoffice.org/xref/core/sc/inc/document.hxx#263" target="_blank">here</a></li>
+<li><code>ScTable</code> - which represents a sheet within a document, declared <a href="http://opengrok.libreoffice.org/xref/core/sc/inc/table.hxx#119" target="_blank">here</a></li>
+<li><code>ScColumn</code> - represents a single column within a sheet, declared <a href="http://opengrok.libreoffice.org/xref/core/sc/inc/column.hxx#119" target="_blank">here</a>.</li>
+</ol>
+<h2 id="challenges">Challenges</h2>
+<p>Before the work on 16k cols project started, the columns of a sheet were allocated statically as a plain array of <code>ScColumn</code>&apos;s of size size <code>MAXCOLCOUNT</code> inside <code>ScTable</code> called <code>aCol</code>. We could have just altered the definition of <code>MAXCOLCOUNT</code> from 1024 to 16384, but it has the following two major issues :</p>
+<ol>
+<li>Since we preallocate <code>MAXCOLCOUNT</code> number of columns at the beginning, the memory requirement for a single sheet will increase a lot, independent of how much columns the user is actually going to use.</li>
+<li>Most of the code in methods of <code>ScTable</code> and <code>ScDocument</code> has the following code-pattern in them :<pre><code class="lang-cpp"><span class="hljs-keyword">for</span> ( SCCOL nCol = <span class="hljs-number">0</span>; nCol &lt;= MAXCOL; ++nCol )
+{
+ <span class="hljs-comment">// Does some work on the column aCol[nCol]</span>
+}
+</code></pre>
+where <code>MAXCOL</code> is defined as <code>MAXCOLCOUNT - 1</code>. If we increase the <code>MAXCOLCOUNT</code> statically, it would cause these loops to take longer even though the user may use only some of the first few columns. So the change affects even the users who just want to work with documents with few columns.</li>
+</ol>
+<p>The obvious way to mitigate the above problems is to make the column storage in <code>ScTable</code> dynamic, such that a column is allocated if it is actually required by the user.</p>
 <h2 id="what-have-been-done-so-far">What have been done so far ?</h2>
+<ol>
+<li><p>A <a href="http://nabble.documentfoundation.org/tdf-50916-Calc-Dynamic-column-container-td4162663.html" target="_blank">discussion</a> on LO dev mailing list that led to the ideas to work on this project. This is a great resource for anyone starting out to work in this project.</p>
+</li>
+<li><p>First step in this project was to introduce a dynamic column container using <code>std::vector</code> in <code>ScTable</code> instead of using a plain static array. This was done in the patch <a href="https://gerrit.libreoffice.org/#/c/21620/" target="_blank">Dynamic column container in the pursuit of tdf#50916</a>. The dynamic container is used in <code>ScTable</code> such that there is minimal change required for other files. But it is still not possible to let this container be dynamic (that is to grow from no columns to the required number of columns on user need), because the code in most places assumes that the container has <code>MAXCOLCOUNT</code> number of columns, so the dynamic container still needs to be initialized with <code>MAXCOLCOUNT</code> number of columns till we fix all places where the &quot;static column container&quot; assumption is made.</p>
+</li>
+<li><p>Some side steps were then made to improve some static datastructures used in <code>ScMarkData</code> and <code>ScAttrArray</code> classes to work efficiently with dynamic column container and future column count increase. These were done in two patches a) <a href="https://gerrit.libreoffice.org/#/c/22163/" target="_blank">Refactor ScMarkData for tdf#50916</a> and b) <a href="https://gerrit.libreoffice.org/#/c/27828/" target="_blank">Refactor ScAttrArray for tdf#50916</a>. Be sure to read the detailed commit messages.</p>
+</li>
+<li><p>A first step to fix the places where &quot;static column container&quot; assumption is made is done in the patch <a href="https://gerrit.libreoffice.org/#/c/31125/" target="_blank">tdf#50916 : Refactor table1.cxx wherever there is column access</a>. This patch fixes some of the places in <code>table1.cxx</code> where this assumption is made.</p>
+</li>
+<li><p>These patches continues the effort to fix the code where the static column container assumption is made -</p>
+<ol>
+<li><a href="https://gerrit.libreoffice.org/32708" target="_blank">Use aCol.size() instead of MAXCOL to increase max number of column</a></li>
+<li><a href="https://gerrit.libreoffice.org/33061" target="_blank">Make sure that we don&apos;t access aCol out of range</a></li>
+<li><a href="https://gerrit.libreoffice.org/33296" target="_blank">Allow ScTable work on dynamic ScColContainer</a>,</li>
+<li><a href="https://gerrit.libreoffice.org/33196" target="_blank">Introduce new column validation function</a> (in review),</li>
+<li><a href="https://gerrit.libreoffice.org/#/c/33647/" target="_blank">Allow proper updating, deleting and inserting tabs</a> (in review)</li>
+<li><a href="https://gerrit.libreoffice.org/33724" target="_blank">Allow dynamically increase number of columns according to needs</a> (in review)</li>
+</ol>
+</li>
+</ol>
 <h2 id="what-to-do-next">What to do next ?</h2>
+<p>We need to make sure we have fixed all places in table*.cxx and documen*.cxx where the static assumption is made. Another type of change is where there is modification of a column (search for non-const functions in ScTable/ScDocument) - if the required column does not exist, need to create it using <code>ScTable::CreateColumnIfNotExists()</code> introduced in the currently in review patch <a href="https://gerrit.libreoffice.org/33724" target="_blank">Allow dynamically increase number of columns according to needs</a>.</p>
 
                     
                     </section>
