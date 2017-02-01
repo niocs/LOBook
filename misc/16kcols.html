@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
-        <title>mdds | Libreoffice Blog</title>
+        <title>16kcols | Libreoffice Blog</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.0.2">
@@ -20,10 +20,10 @@
         
     
     
-    <link rel="next" href="../misc/namespaces.html" />
+    <link rel="next" href="../extensions/index.html" />
     
     
-    <link rel="prev" href="../misc/bibisect.html" />
+    <link rel="prev" href="../misc/patchchecklist.html" />
     
 
         
@@ -36,7 +36,7 @@
     
 
         
-    <div class="book" data-level="3.5" data-basepath=".." data-revision="Wed Feb 01 2017 13:25:40 GMT+0530 (IST)">
+    <div class="book" data-level="3.8" data-basepath=".." data-revision="Wed Feb 01 2017 13:25:40 GMT+0530 (IST)">
     
 
 <div class="book-summary">
@@ -259,7 +259,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="3.5" data-path="misc/mdds.html">
+        <li class="chapter " data-level="3.5" data-path="misc/mdds.html">
             
                 
                     <a href="../misc/mdds.html">
@@ -304,7 +304,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3.8" data-path="misc/16kcols.html">
+        <li class="chapter active" data-level="3.8" data-path="misc/16kcols.html">
             
                 
                     <a href="../misc/16kcols.html">
@@ -628,54 +628,14 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="mdds">MDDS</h1>
-<p>MDDS stands for Multi Dimensional Data Structure. It is basically a collection of data structures used to efficiently store as well as query multi-dimensional data for various filtering criteria. It contains the following data structures.</p>
-<ul>
-<li><p>Segment tree:  a balanced binary tree based data structure. The main feature of this data structure is that it can efficiently detect all intervals (that may overlap) that contain a given point.</p>
-</li>
-<li><p>Flat segment tree: a variant of segment tree that handles non-overlapping intervals. This data structure is useful to store values associated with 1-D intervals that never overlap with each other. To know about the features as well as advantages of flat segment tree see <a href="http://kohei.us/2010/02/20/increasing-calcs-row-limit-to-1-million/" target="_blank">this</a></p>
-</li>
-<li><p>Rectangle set: can store 2-D rectangles. It can be used to efficiently query all rectangles that contain a given point.</p>
-</li>
-<li><p>Point quad tree: stores 2-dimensional points and provides an efficient way to query all points within specified rectangular region.</p>
-</li>
-<li><p>Mixed type matrix: Stores elements of four types: numeric, string, boolean, and empty. IT can also store flags associated with each element.</p>
-</li>
-<li><p>Multi type vector: Can store different unspecified types in a single logical array. Here contiguous elements of identical type are stored in contiguous intervals of memory.</p>
-</li>
-<li><p>Multi type matrix: Can store four different types of elements: numeric, string, boolean, and empty.</p>
-</li>
-</ul>
-<p>To know more on mdds try <a href="http://kohei.us/tag/mdds/" target="_blank">http://kohei.us/tag/mdds/</a></p>
-<p>Let us look at the example of a <strong>flat segment tree</strong>.</p>
-<p>It is a templated class having public members like key and value, a structure for non leaf value, a structure for leaf value, some handlers for the template class, iterators, functions for inserting a new segment into the tree, functions for removing a segment from the tree, funtions for shifting the segments left or right, function to perform leaf node search for a value based on a key. The following code was taken from the example code provided along with the mdds source code.</p>
-<pre><code>typedef ::mdds::flat_segment_tree&lt;long, int&gt; fst_type;
+                        <h1 id="project-increasing-the-limit-of-number-of-columns-from-1024-to-16384-in-calc">Project : Increasing the limit of number of columns from 1024 to 16384 in Calc</h1>
+<h2 id="motivation">Motivation</h2>
+<p>Often we need the ability to load sheets from MS Excel/csv files that have more than 1024 columns in it. MS Excel can effortlessly open such large column files, but in Calc we are limited to loading files with 1024 columns.</p>
+<h2 id="challenges">Challenges</h2>
+<h2 id="basics-on-the-related-code">Basics on the related code</h2>
+<h2 id="what-have-been-done-so-far">What have been done so far ?</h2>
+<h2 id="what-to-do-next">What to do next ?</h2>
 
-int main() 
-{ 
-    // Define the begin and end points of the whole segment, and the default value. 
-    fst_type db(0, 500, 0); 
-
-    db.insert_front(10, 20, 10); 
-    db.insert_back(50, 70, 15); 
-    db.insert_back(60, 65, 5); 
-
-    int value = -1; 
-    long beg = -1, end = -1; 
-
-    // Perform linear search.  This doesn&apos;t require the tree to be built beforehand.  Note that the begin and end point parameters are optional. 
-    db.search(15, value, &amp;beg, &amp;end); 
-    cout &lt;&lt; &quot;The value at 15 is &quot; &lt;&lt; value &lt;&lt; &quot;, and this segment spans from &quot; &lt;&lt; beg &lt;&lt; &quot; to &quot; &lt;&lt; end &lt;&lt; endl;; 
-
-    //build the tree first
-    db.build_tree(); 
-
-    // Perform tree search.  Tree search is generally a lot faster than linear 
-    // search, but requires the tree to be built beforehand. 
-    db.search_tree(62, value, &amp;beg, &amp;end); 
-    cout &lt;&lt; &quot;The value at 62 is &quot; &lt;&lt; value &lt;&lt; &quot;, and this segment spans from &quot; &lt;&lt; beg &lt;&lt; &quot; to &quot; &lt;&lt; end &lt;&lt; endl;; 
-}
-</code></pre>
                     
                     </section>
                 
@@ -685,10 +645,10 @@ int main()
         </div>
 
         
-        <a href="../misc/bibisect.html" class="navigation navigation-prev " aria-label="Previous page: bibisect"><i class="fa fa-angle-left"></i></a>
+        <a href="../misc/patchchecklist.html" class="navigation navigation-prev " aria-label="Previous page: patchchecklist"><i class="fa fa-angle-left"></i></a>
         
         
-        <a href="../misc/namespaces.html" class="navigation navigation-next " aria-label="Next page: namespaces"><i class="fa fa-angle-right"></i></a>
+        <a href="../extensions/index.html" class="navigation navigation-next " aria-label="Next page: LibreOffice extensions"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
